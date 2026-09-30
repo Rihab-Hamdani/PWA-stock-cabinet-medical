@@ -43,3 +43,70 @@ A stock management application for a medical practice specialized in functional 
 ## Backend architecture
 
 Modular monolith organized by business domain:
+com.example.stock
+├── auth — users, roles, JWT, security, registration
+├── catalog — categories and products
+├── supplier — suppliers
+├── inventory — stock movements (in/out)
+├── patient — patient records and appointments
+└── shared — configuration, cross-cutting security, dashboard, error handling
+
+
+## Prerequisites
+
+- Java 21
+- Node.js 18+
+- PostgreSQL 16+
+- A Brevo account (optional, for real password-reset email delivery)
+
+## Setup
+
+### Database
+
+Create a PostgreSQL database named `stock`, then run the migration script found at `backend/src/main/resources/db/migration/V1__init.sql`.
+
+### Backend
+
+```bash
+cd backend
+./mvnw clean package -DskipTests
+./mvnw spring-boot:run
+```
+
+Main environment variables (see `application.yaml`):
+
+```yaml
+DB_URL, DB_USER, DB_PASSWORD       # PostgreSQL connection
+JWT_SECRET, JWT_EXPIRATION_MS      # token configuration
+MAIL_USER, MAIL_PASSWORD, MAIL_FROM # Brevo SMTP
+CORS_ORIGINS                        # allowed frontend origin
+ADMIN_EMAIL, ADMIN_PASSWORD         # fallback admin credentials
+```
+
+The backend starts on `http://localhost:8090`, served under the `/api/v1` prefix.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+ng serve
+```
+
+The app is available at `http://localhost:4200`.
+
+## First run
+
+The very first account registered via `/register` automatically becomes the **doctor** (administrator). Every subsequent account is created as a **secretary**, pending approval by the doctor from the admin screen.
+
+## Roadmap
+
+- [ ] Push notifications (Firebase Cloud Messaging)
+- [ ] Automatic alert follow-ups
+- [ ] PDF / Excel export of history
+- [ ] Consumption statistics
+- [ ] Multi-practice support
+
+## License
+
+Private project — all rights reserved.
