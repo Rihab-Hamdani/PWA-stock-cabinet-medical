@@ -1,45 +1,45 @@
-# Stock Cabinet Médical
+# Medical Practice Stock Management
 
-Application de gestion de stock pour un cabinet médical spécialisé en exploration fonctionnelle (EEG, EMG, PEA, PEV, ERG, PES, EFR/Spiro...). Progressive Web App installable sur mobile et desktop, permettant au médecin et à la/aux secrétaire(s) de suivre en temps réel les entrées et sorties de produits, d'être alertés en cas de rupture de stock, et de gérer les rendez-vous patients.
+A stock management application for a medical practice specialized in functional exploration (EEG, EMG, PEA, PEV, ERG, PES, EFR/Spirometry...). Built as an installable Progressive Web App for mobile and desktop, allowing the doctor and secretary/secretaries to track stock movements in real time, get alerted on low stock, and manage patient appointments.
 
-## Fonctionnalités
+## Features
 
-### Authentification & rôles
-- Connexion sécurisée par JWT
-- Deux rôles : **Médecin** (accès complet) et **Secrétaire**
-- Inscription libre avec validation par le médecin (le tout premier compte créé devient automatiquement médecin)
-- Réinitialisation de mot de passe par email (Brevo)
-- Gestion des comptes en attente/actifs depuis un écran d'administration
+### Authentication & roles
+- Secure JWT-based login
+- Two roles: **Doctor** (full access) and **Secretary**
+- Self-service registration with doctor approval (the very first account created automatically becomes the doctor)
+- Email-based password reset (via Brevo)
+- Admin screen to review pending/active accounts
 
 ### Stock
-- Catégories de produits, créées avec leur premier produit
-- Fiche produit : nom, unité, quantité, seuil d'alerte, prix unitaire HT, péremption, numéro de lot
-- Recherche et filtrage par catégorie
-- Sortie rapide ("Utiliser") et arrivage complet (quantité, prix, TVA, fournisseur — sélectionné dans une liste ou saisi manuellement avec téléphone, numéro de facture)
-- Historique complet et horodaté des mouvements par produit
-- Gestion des fournisseurs
+- Product categories, created together with their first product
+- Product record: name, unit, quantity, alert threshold, unit price (excl. tax), expiry date, lot number
+- Search and filter by category
+- Quick usage ("Use") and full stock intake (quantity, price, VAT, supplier — picked from a list or entered manually with phone number and invoice number)
+- Complete, timestamped movement history per product
+- Supplier management
 
-### Tableau de bord
-- Vue adaptée au rôle connecté : produits en rupture / sous le seuil, mouvements du jour
-- Indicateurs financiers réservés au médecin : valeur du stock, montant des entrées du jour, montant perdu (sorties valorisées)
-- Alertes de stock avec accès direct à la fiche produit
+### Dashboard
+- View adapted to the logged-in role: out-of-stock / below-threshold products, today's movements
+- Financial indicators for the doctor only: stock value, today's incoming amount, lost amount (valued outgoing stock)
+- Stock alerts with direct access to the product record
 
 ### Patients
-- Fiche d'identification patient (identité, coordonnées)
-- Informations de rendez-vous (examen demandé, médecin traitant, clinique, date)
-- Suivi de paiement (assurance, montant payé, remarques)
+- Patient identification record (identity, contact details)
+- Appointment info (requested exam, referring doctor, clinic, date)
+- Payment tracking (insurance, amount paid, notes)
 
-## Stack technique
+## Tech stack
 
-| Couche | Technologie |
+| Layer | Technology |
 |---|---|
 | Frontend | Angular 18 (standalone components, signals), PWA |
-| Backend | Spring Boot 4.1 (Java 21), architecture monolithe modulaire |
-| Base de données | PostgreSQL |
-| Authentification | Spring Security 6 + JWT (jjwt) |
+| Backend | Spring Boot 4.1 (Java 21), modular monolith |
+| Database | PostgreSQL |
+| Authentication | Spring Security 6 + JWT (jjwt) |
 | Email | Brevo (SMTP) |
-| Outils | IntelliJ IDEA, DBeaver |
+| Tools | IntelliJ IDEA, DBeaver |
 
-## Architecture backend
+## Backend architecture
 
-Monolithe modulaire organisé par domaine métier :
+Modular monolith organized by business domain:
