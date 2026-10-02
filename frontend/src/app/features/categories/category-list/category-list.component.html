@@ -1,0 +1,191 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Stock</span>
+  </header>
+
+  <div class="filters">
+    <input
+      class="search"
+      type="text"
+      placeholder="Rechercher une catégorie…"
+      [ngModel]="recherche()"
+      (ngModelChange)="onRechercheChange($event)"
+    />
+  </div>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (erreur()) {
+      <p class="err">{{ erreur() }}</p>
+    } @else if (categories().length === 0) {
+      <p class="info">Aucune catégorie trouvée.</p>
+    } @else {
+      @for (cat of categories(); track cat.id) {
+        <div class="category-block">
+          <button class="category-row" (click)="toggleCategorie(cat.id)">
+            <span class="nom">{{ cat.nom }}</span>
+            <span class="row-actions">
+              <span class="btn-delete-cat" (click)="supprimerCategorie(cat, $event)" title="Supprimer la catégorie">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </span>
+              <span class="chevron" [class.open]="categorieOuverte() === cat.id">›</span>
+            </span>
+          </button>
+
+          @if (categorieOuverte() === cat.id) {
+            <div class="produits-liste">
+              @if (chargementProduits() === cat.id) {
+                <p class="info-inline">Chargement des produits…</p>
+              } @else if (produitsDe(cat.id).length === 0) {
+                <p class="info-inline">Aucun produit dans cette catégorie.</p>
+              } @else {
+                @for (produit of produitsDe(cat.id); track produit.id) {
+                  <div class="produit-card" [class.rupture]="produit.enRupture">
+                    <div class="card-top" (click)="voirDetail(produit)">
+                      <span class="dot" [class.dot-rupture]="produit.enRupture"></span>
+                      <span class="produit-nom">{{ produit.nom }}</span>
+                      <span class="pill" [class.p-ok]="!produit.enRupture" [class.p-rupture]="produit.enRupture">
+                        {{ produit.enRupture ? 'Rupture' : 'OK' }}
+                      </span>
+                    </div>
+
+                    <div class="card-qte" (click)="voirDetail(produit)">
+                      <span class="qte-nombre">{{ produit.quantiteActuelle }}</span>
+                      <span class="qte-unite">{{ produit.unite }}</span>
+                      <span class="qte-seuil">/ seuil {{ produit.seuilAlerte }}</span>
+                    </div>
+
+                    <div class="card-actions">
+                      <button
+                        class="btn-utiliser"
+                        [disabled]="enCoursUtiliser() === produit.id || produit.quantiteActuelle === 0"
+                        (click)="utiliser(produit)">
+                        {{ enCoursUtiliser() === produit.id ? '…' : 'Utiliser' }}
+                      </button>
+                      <button class="btn-icon btn-arrivage" (click)="voirDetail(produit)" title="Enregistrer un arrivage">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                      </button>
+                      <button class="btn-icon btn-edit" (click)="modifier(produit)" title="Modifier">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                          <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                      </button>
+                      <button class="btn-icon btn-delete" (click)="desactiver(produit)" title="Désactiver">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                }
+              }
+
+              @if (categorieProduitCible() === cat.id) {
+                <form class="produit-form" [formGroup]="formNouveauProduit" (ngSubmit)="ajouterProduit()">
+                  <p class="form-section-title">Nouveau produit</p>
+                  <label>Nom du produit
+                    <input type="text" formControlName="nom" />
+                  </label>
+                  <label>Unité
+                    <input type="text" formControlName="unite" list="unites-datalist" />
+                    <datalist id="unites-datalist">
+                      @for (u of unites(); track u) { <option [value]="u"></option> }
+                    </datalist>
+                  </label>
+                  <label>Seuil d'alerte
+                    <input type="number" formControlName="seuilAlerte" min="0" />
+                  </label>
+
+                  <p class="form-section-title">Arrivage initial (optionnel)</p>
+                  <label>Quantité reçue
+                    <input type="number" formControlName="quantiteInitiale" min="0" />
+                  </label>
+                  <label>Prix unitaire HT
+                    <input type="number" formControlName="prixUnitaireHt" min="0" step="0.01" />
+                  </label>
+
+                  <div class="fournisseur-tabs">
+                    <button type="button" class="tab" [class.active]="modeFournisseurProduit() === 'liste'" (click)="modeFournisseurProduit.set('liste')">Choisir dans la liste</button>
+                    <button type="button" class="tab" [class.active]="modeFournisseurProduit() === 'nouveau'" (click)="modeFournisseurProduit.set('nouveau')">Nouveau fournisseur</button>
+                  </div>
+
+                  @if (modeFournisseurProduit() === 'liste') {
+                    <label>Fournisseur
+                      <select formControlName="fournisseurId">
+                        <option value="">Aucun</option>
+                        @for (f of fournisseurs(); track f.id) { <option [value]="f.id">{{ f.nom }}</option> }
+                      </select>
+                    </label>
+                  } @else {
+                    <label>Nom du fournisseur
+                      <input type="text" formControlName="fournisseurNom" />
+                    </label>
+                    <label>Téléphone (optionnel)
+                      <input type="tel" formControlName="fournisseurTelephone" />
+                    </label>
+                  }
+
+                  <label>N° de facture (optionnel)
+                    <input type="text" formControlName="numeroFacture" />
+                  </label>
+
+                  @if (ajoutProduitErreur()) { <p class="err">{{ ajoutProduitErreur() }}</p> }
+
+                  <div class="add-actions">
+                    <button type="button" class="btn-cancel" (click)="fermerAjoutProduit()">Annuler</button>
+                    <button type="submit" class="btn-primary" [disabled]="formNouveauProduit.invalid || ajoutProduitEnCours()">
+                      {{ ajoutProduitEnCours() ? 'Ajout…' : 'Créer' }}
+                    </button>
+                  </div>
+                </form>
+              } @else {
+                <button class="btn-outline btn-add-produit" (click)="ouvrirAjoutProduit(cat.id, $event)">+ Ajouter un produit</button>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <div class="add-block">
+      @if (!formulaireCategorieOuvert()) {
+        <button class="btn-outline" (click)="formulaireCategorieOuvert.set(true)">+ Nouvelle catégorie</button>
+      } @else {
+        <form class="add-form" [formGroup]="formCategorie" (ngSubmit)="ajouterCategorie()">
+          <p class="form-section-title">Nouvelle catégorie</p>
+          <label>Nom de la catégorie
+            <input type="text" formControlName="nom" />
+          </label>
+
+          <p class="form-section-title">Premier produit</p>
+          <label>Nom du produit
+            <input type="text" formControlName="produitNom" />
+          </label>
+          <label>Unité
+            <input type="text" formControlName="unite" list="unites-datalist" />
+          </label>
+          <label>Seuil d'alerte
+            <input type="number" formControlName="seuilAlerte" min="0" />
+          </label>
+
+          @if (ajoutCategorieErreur()) { <p class="err">{{ ajoutCategorieErreur() }}</p> }
+
+          <div class="add-actions">
+            <button type="button" class="btn-cancel" (click)="formulaireCategorieOuvert.set(false)">Annuler</button>
+            <button type="submit" class="btn-primary" [disabled]="formCategorie.invalid || ajoutCategorieEnCours()">
+              {{ ajoutCategorieEnCours() ? 'Ajout…' : 'Créer' }}
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </main>
+</div>

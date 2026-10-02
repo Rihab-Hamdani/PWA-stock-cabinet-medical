@@ -1,0 +1,34 @@
+@use '../../../shared/styles/variables' as *;
+@use '../../../shared/styles/mixins' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: $bg-page;
+}
+
+.page {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+}
+
+.content { padding: 18px; }
+
+form { display: flex; flex-direction: column; gap: 14px; }
+
+label {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px; font-weight: 500; color: $text-body;
+  input, select { @include field; }
+}
+
+.err { color: $danger-dark; font-size: 13px; margin: 0; }
+
+button { @include btn-primary; margin-top: 4px; }

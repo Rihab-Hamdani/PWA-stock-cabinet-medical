@@ -1,0 +1,39 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="brand">
+      <div class="logo"><i class="ti ti-user-plus"></i></div>
+      <h1>Créer un compte</h1>
+      <p>Secrétariat — Cabinet Médical</p>
+    </div>
+
+    @if (succes()) {
+      <p class="success">
+        Compte créé ! Il sera activé par le médecin avant que vous puissiez vous connecter.
+      </p>
+      <a routerLink="/login" class="back-link">Retour à la connexion</a>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <label>Prénom
+          <input type="text" formControlName="prenom" />
+        </label>
+        <label>Nom
+          <input type="text" formControlName="nom" />
+        </label>
+        <label>Email
+          <input type="email" formControlName="email" placeholder="vous@cabinet.tn" />
+        </label>
+        <label>Mot de passe
+          <input type="password" formControlName="motDePasse" placeholder="6 caractères min." />
+        </label>
+
+        @if (erreur()) { <p class="err">{{ erreur() }}</p> }
+
+        <button type="submit" [disabled]="form.invalid || chargement()">
+          {{ chargement() ? 'Création…' : 'Créer mon compte' }}
+        </button>
+
+        <a routerLink="/login" class="back-link">J'ai déjà un compte</a>
+      </form>
+    }
+  </div>
+</div>

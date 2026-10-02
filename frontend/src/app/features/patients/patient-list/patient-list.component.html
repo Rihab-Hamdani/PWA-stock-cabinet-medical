@@ -1,0 +1,26 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Patients</span>
+  </header>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (patients().length === 0) {
+      <p class="info">Aucun patient enregistré.</p>
+    } @else {
+      @for (p of patients(); track p.id) {
+        <div class="patient-row">
+          <div class="nom">{{ p.prenom }} {{ p.nom }}</div>
+          <div class="meta">
+            @if (p.examenDemande) { {{ p.examenDemande }} }
+            @if (p.dateRdv) { · {{ p.dateRdv }} }
+            @if (p.telephone) { · {{ p.telephone }} }
+          </div>
+        </div>
+      }
+    }
+  </main>
+
+  <a routerLink="/patients/nouveau" class="fab">+</a>
+</div>

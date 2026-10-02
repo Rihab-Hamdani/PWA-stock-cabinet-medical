@@ -1,0 +1,66 @@
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: $bg-page;
+}
+
+.page {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+}
+
+.content { flex: 1; padding: 18px; }
+
+.card {
+  @include card;
+  text-align: center;
+  padding: 32px 20px;
+  margin-bottom: 20px;
+
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: $teal;
+    color: $white;
+    font-size: 22px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+  }
+
+  .nom { font-size: 17px; font-weight: 600; color: $text-dark; }
+  .email { font-size: 13px; color: $text-faint; margin-top: 2px; }
+
+  .role-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: $teal-light;
+    color: $teal-dark;
+
+    &.role-medecin { background: $warning-light; color: $warning-dark; }
+  }
+}
+
+.btn-logout {
+  @include btn-outline;
+  border-color: $danger;
+  color: $danger-dark;
+}

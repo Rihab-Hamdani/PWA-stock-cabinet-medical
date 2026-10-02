@@ -1,0 +1,80 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Produits</span>
+    <a routerLink="/categories" class="link-categories">Gérer les catégories</a>
+</header>
+
+  <div class="filters">
+    <input
+      class="search"
+      type="text"
+      placeholder="Rechercher un produit…"
+      [ngModel]="recherche()"
+      (ngModelChange)="onRechercheChange($event)"
+    />
+
+    <div class="chips">
+      <button class="chip" [class.active]="categorieActive() === null" (click)="filtrerParCategorie(null)">
+        Toutes
+      </button>
+      @for (cat of categories(); track cat.id) {
+        <button class="chip" [class.active]="categorieActive() === cat.id" (click)="filtrerParCategorie(cat.id)">
+          {{ cat.nom }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (erreur()) {
+      <p class="err">{{ erreur() }}</p>
+    } @else if (produits().length === 0) {
+      <p class="info">Aucun produit trouvé.</p>
+    } @else {
+      @for (produit of produits(); track produit.id) {
+  <div class="product-card" [class.rupture]="produit.enRupture" (click)="voirDetail(produit)">
+    <div class="card-top">
+      <span class="dot" [class.dot-rupture]="produit.enRupture"></span>
+      <span class="nom">{{ produit.nom }}</span>
+      <span class="pill" [class.p-ok]="!produit.enRupture" [class.p-rupture]="produit.enRupture">
+        {{ produit.enRupture ? 'Rupture' : 'OK' }}
+      </span>
+    </div>
+
+    <div class="card-qte">
+      <span class="qte-nombre">{{ produit.quantiteActuelle }}</span>
+      <span class="qte-unite">{{ produit.unite }}</span>
+      <span class="qte-seuil">/ seuil {{ produit.seuilAlerte }}</span>
+    </div>
+
+    <div class="progress-track">
+      <div
+        class="progress-fill"
+        [class.fill-rupture]="produit.enRupture"
+        [style.width.%]="produit.seuilAlerte > 0 ? (produit.quantiteActuelle / (produit.seuilAlerte * 2)) * 100 : 100"
+      ></div>
+    </div>
+
+    <div class="card-actions">
+      <button
+        class="btn-utiliser"
+        [disabled]="enCoursSortie() === produit.id || produit.quantiteActuelle === 0"
+        (click)="utiliser(produit)">
+        {{ enCoursSortie() === produit.id ? '…' : 'Utiliser' }}
+      </button>
+      <button *appHasRole="'MEDECIN'" class="btn-icon btn-edit" (click)="modifier(produit)" aria-label="Modifier">
+        ✎
+      </button>
+      <button *appHasRole="'MEDECIN'" class="btn-icon btn-delete" (click)="desactiver(produit)" aria-label="Désactiver">
+        🗑
+      </button>
+    </div>
+  </div>
+}
+    }
+  </main>
+
+  <a *appHasRole="'MEDECIN'" routerLink="/produits/nouveau" class="fab">+</a>
+</div>

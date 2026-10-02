@@ -1,0 +1,67 @@
+@use 'variables' as *;
+
+// Carte blanche standard
+@mixin card {
+  background: $white;
+  border-radius: $radius;
+  padding: $gap-md;
+  box-shadow: $shadow-card;
+}
+
+// Bouton principal (teal plein)
+@mixin btn-primary {
+  background: $teal;
+  color: $white;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 500;
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.08s, background 0.15s;
+
+  &:active { transform: scale(0.99); }
+  &:hover  { background: $teal-dark; }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+// Bouton secondaire (contour)
+@mixin btn-outline {
+  background: $white;
+  color: $teal;
+  border: 1px solid $teal;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:active { transform: scale(0.99); }
+}
+
+// Champ de formulaire
+@mixin field {
+  width: 100%;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  background: $white;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: $teal;
+  }
+}
+
+// Pastille de statut
+@mixin pill {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-weight: 500;
+  display: inline-block;
+}

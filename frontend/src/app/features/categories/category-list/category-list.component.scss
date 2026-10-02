@@ -1,0 +1,243 @@
+@use '../../../shared/styles/variables' as *;
+@use '../../../shared/styles/mixins' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: $bg-page;
+}
+
+.page {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+}
+
+.filters { padding: 14px 18px 0; background: $teal; }
+
+.search { @include field; margin-bottom: 14px; }
+
+.content { padding: 18px; }
+
+.info, .err {
+  text-align: center;
+  font-size: 14px;
+  color: $text-muted;
+  margin-top: 24px;
+}
+
+.err { color: $danger-dark; margin-top: 8px; }
+
+.category-block {
+  @include card;
+  margin-bottom: 10px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.category-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: $gap-md;
+  cursor: pointer;
+  text-align: left;
+
+  .nom { font-size: 15px; font-weight: 500; color: $text-dark; }
+
+  .chevron {
+    font-size: 20px;
+    color: $text-faint;
+    transition: transform 0.15s;
+    transform: rotate(90deg);
+
+    &.open { transform: rotate(-90deg); }
+  }
+}
+
+.produits-liste {
+  border-top: 1px solid $border-soft;
+  padding: $gap-md;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-inline {
+  font-size: 13px;
+  color: $text-faint;
+  padding: 4px 0;
+}
+
+.produit-card {
+  border: 1px solid $border-soft;
+  border-radius: $radius-sm;
+  padding: 12px;
+
+  &.rupture { border-left: 3px solid $danger; }
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: $success;
+    flex-shrink: 0;
+
+    &.dot-rupture { background: $danger; }
+  }
+
+  .produit-nom { flex: 1; font-size: 14px; font-weight: 600; color: $text-dark; }
+}
+
+.pill {
+  @include pill;
+  &.p-ok { background: $teal-light; color: $teal-dark; }
+  &.p-rupture { background: $danger-light; color: $danger-dark; }
+}
+
+.card-qte {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 10px;
+  cursor: pointer;
+
+  .qte-nombre { font-size: 20px; font-weight: 700; color: $text-dark; }
+  .qte-unite { font-size: 12px; color: $text-muted; }
+  .qte-seuil { font-size: 11px; color: $text-faint; margin-left: 4px; }
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-utiliser {
+  flex: 1;
+  border: 1px solid $warning;
+  background: $warning-light;
+  color: $warning-dark;
+  border-radius: 8px;
+  padding: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-icon {
+  width: 34px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  background: $white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-arrivage { color: $teal; border-color: $teal-light; }
+.btn-edit { color: #388BFD; border-color: rgba(56,139,253,.25); }
+.btn-delete { color: $danger; border-color: $danger-light; }
+
+.add-block { margin-top: 20px; }
+
+.btn-outline { @include btn-outline; width: 100%; }
+
+.add-form {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  input { @include field; }
+}
+
+.add-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-cancel {
+  flex: 1;
+  border: 1px solid $border;
+  background: $white;
+  color: $text-body;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  flex: 1;
+  @include btn-primary;
+  margin-top: 0;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-delete-cat {
+  color: $danger;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &.disabled { opacity: .4; pointer-events: none; }
+}
+
+.form-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: $text-faint;
+  margin: 6px 0 2px;
+  font-weight: 700;
+}
+.btn-add-produit { width: 100%; margin-top: 4px; }
+
+.produit-form {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+
+  label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: $text-body; }
+  input, select { @include field; }
+}
+
+.fournisseur-tabs { display: flex; gap: 8px; }
+
+.tab {
+  flex: 1;
+  border: 1px solid $border;
+  background: $white;
+  color: $text-body;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &.active { background: $teal; color: $white; border-color: $teal; }
+}

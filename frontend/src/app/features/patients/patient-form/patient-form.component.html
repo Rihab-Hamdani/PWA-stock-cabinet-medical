@@ -1,0 +1,94 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Identification du patient</span>
+  </header>
+
+  <main class="content">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <p class="section-title">Patient</p>
+      <label>Prénom *
+        <input type="text" formControlName="prenom" />
+      </label>
+      <label>Nom *
+        <input type="text" formControlName="nom" />
+      </label>
+      <label>Email
+        <input type="email" formControlName="email" />
+      </label>
+      <label>Date de naissance
+        <input type="date" formControlName="dateNaissance" />
+      </label>
+      <label>Sexe
+        <select formControlName="sexe">
+          <option value="">—</option>
+          <option value="Masculin">Masculin</option>
+          <option value="Féminin">Féminin</option>
+        </select>
+      </label>
+      <label>Téléphone
+        <input type="tel" formControlName="telephone" />
+      </label>
+      <label>Adresse
+        <input type="text" formControlName="adresse" />
+      </label>
+
+      <p class="section-title">Examen &amp; rendez-vous</p>
+      <label>Examen demandé
+        <select formControlName="examenDemande">
+          <option value="">—</option>
+          @for (e of examens; track e) { <option [value]="e">{{ e }}</option> }
+        </select>
+      </label>
+      @if (form.get('examenDemande')?.value === 'Autre') {
+        <label>Préciser l'examen
+          <input type="text" formControlName="examenAutre" />
+        </label>
+      }
+
+      <label>Médecin traitant
+        <select formControlName="medecinTraitant">
+          <option value="">—</option>
+          @for (m of medecins; track m) { <option [value]="m">{{ m }}</option> }
+        </select>
+      </label>
+      @if (form.get('medecinTraitant')?.value === 'Autre') {
+        <label>Préciser le médecin
+          <input type="text" formControlName="medecinAutre" />
+        </label>
+      }
+
+      <label>Clinique
+        <select formControlName="clinique">
+          <option value="">—</option>
+          @for (c of cliniques; track c) { <option [value]="c">{{ c }}</option> }
+        </select>
+      </label>
+      @if (form.get('clinique')?.value === 'Autre') {
+        <label>Préciser la clinique
+          <input type="text" formControlName="cliniqueAutre" />
+        </label>
+      }
+
+      <label>Date du rendez-vous
+        <input type="date" formControlName="dateRdv" />
+      </label>
+
+      <p class="section-title">Paiement</p>
+      <label>Assurance
+        <input type="text" formControlName="assurance" />
+      </label>
+      <label>Montant payé
+        <input type="number" formControlName="montantPaye" min="0" step="0.01" />
+      </label>
+      <label>Remarques
+        <textarea formControlName="remarques" rows="3"></textarea>
+      </label>
+
+      @if (erreur()) { <p class="err">{{ erreur() }}</p> }
+
+      <button type="submit" [disabled]="form.invalid || chargement()">
+        {{ chargement() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </form>
+  </main>
+</div>

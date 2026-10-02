@@ -1,0 +1,65 @@
+@use '../../../shared/styles/variables' as *;
+@use '../../../shared/styles/mixins' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: $bg-page;
+}
+
+.page {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+}
+
+.content { flex: 1; padding: 18px; }
+
+.info, .err {
+  text-align: center;
+  font-size: 14px;
+  color: $text-muted;
+  margin-top: 24px;
+}
+
+.err { color: $danger-dark; }
+
+.compte-row {
+  @include card;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  .nom { font-size: 15px; font-weight: 600; color: $text-dark; }
+  .email { font-size: 13px; color: $text-faint; margin-top: 2px; }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-activer, .btn-rejeter {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-activer { background: $teal; color: $white; }
+.btn-rejeter { background: $danger-light; color: $danger-dark; }

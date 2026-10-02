@@ -1,0 +1,38 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Comptes en attente</span>
+  </header>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (erreur()) {
+      <p class="err">{{ erreur() }}</p>
+    } @else if (comptes().length === 0) {
+      <p class="info">Aucune demande en attente.</p>
+    } @else {
+      @for (compte of comptes(); track compte.id) {
+        <div class="compte-row">
+          <div class="info-bloc">
+            <div class="nom">{{ compte.prenom }} {{ compte.nom }}</div>
+            <div class="email">{{ compte.email }}</div>
+          </div>
+          <div class="actions">
+            <button
+              class="btn-activer"
+              [disabled]="enCours() === compte.id"
+              (click)="activer(compte.id)">
+              Activer
+            </button>
+            <button
+              class="btn-rejeter"
+              [disabled]="enCours() === compte.id"
+              (click)="rejeter(compte.id)">
+              Rejeter
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </main>
+</div>

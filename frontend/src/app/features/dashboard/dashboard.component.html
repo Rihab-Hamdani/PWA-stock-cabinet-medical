@@ -1,0 +1,81 @@
+<div class="dash">
+  <header class="topbar">
+    <div>
+      <span class="greet">Bonjour,</span>
+      <span class="name">{{ auth.user()?.prenom }} 👋</span>
+    </div>
+    <button class="bell" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3l2 2H4l2-2v-3a7 7 0 0 1 4-6M9 17v1a3 3 0 0 0 6 0v-1"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    }
+
+    @if (!chargement() && erreur()) {
+      <p class="err">{{ erreur() }}</p>
+    }
+
+    @if (!chargement() && !erreur() && data(); as d) {
+      <p class="subtitle">Voici l'état de votre stock aujourd'hui.</p>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span class="stat-label">En rupture</span>
+          <div class="stat-value v-danger">{{ d.produitsEnRupture }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Sous le seuil</span>
+          <div class="stat-value v-warning">{{ d.produitsSousLeSeuil }}</div>
+        </div>
+
+        @if (auth.isMedecin()) {
+  <div class="stat-card">
+    <span class="stat-label">Valeur du stock</span>
+    <div class="stat-value v-teal">{{ d.valeurDuStock | number:'1.0-0' }}<small> DT</small></div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Montant du jour</span>
+    <div class="stat-value v-dark">{{ d.montantDuJour | number:'1.0-0' }}<small> DT</small></div>
+  </div>
+  <div class="stat-card stat-wide">
+    <span class="stat-label">Montant perdu aujourd'hui</span>
+    <div class="stat-value v-danger">{{ d.montantPerdu | number:'1.0-0' }}<small> DT</small></div>
+  </div>
+} @else {
+  <div class="stat-card stat-wide">
+    <span class="stat-label">Mouvements aujourd'hui</span>
+    <div class="stat-value v-dark">{{ d.mouvementsAujourdHui }}</div>
+  </div>
+}
+      </div>
+
+      <h2 class="section-title">Alertes stock</h2>
+
+      @if (d.alertes.length === 0) {
+        <p class="info">Aucune alerte — tout est en stock normal.</p>
+      } @else {
+        @for (produit of d.alertes; track produit.id) {
+          <div class="alert-row">
+            <div class="icon" [class.warn]="produit.quantiteActuelle > 0">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                   [attr.stroke]="produit.quantiteActuelle === 0 ? '#D85A30' : '#BA7517'" stroke-width="2">
+                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/>
+              </svg>
+            </div>
+            <div class="info-bloc">
+              <div class="a-nom">{{ produit.nom }}</div>
+              <div class="a-detail">Stock actuel : {{ produit.quantiteActuelle }} / Seuil : {{ produit.seuilAlerte }}</div>
+            </div>
+            <button class="btn-voir" (click)="voirProduit(produit.id)">Voir</button>
+          </div>
+        }
+      }
+    }
+  </main>
+
+</div>
