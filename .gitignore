@@ -1,0 +1,18 @@
+# Build outputs
+backend/target/
+frontend/dist/
+frontend/.angular/
+
+# Dependencies
+frontend/node_modules/
+
+# IDE and local settings
+.idea/
+backend/.idea/
+frontend/.vscode/
+*.iml
+
+# Local environment files
+*.env
+*.env.*
+!.env.example
