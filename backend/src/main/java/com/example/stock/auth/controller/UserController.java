@@ -5,6 +5,10 @@ import com.example.stock.auth.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.example.stock.auth.dto.UpdateProfileRequest;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,5 +41,16 @@ public class UserController {
     public ResponseEntity<Void> reject(@PathVariable UUID id) {
         userService.reject(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/me")
+    public UserDto updateMyProfile(@Valid @RequestBody UpdateProfileRequest request, Authentication authentication) {
+        return userService.updateMyProfile(authentication.getName(), request);
+    }
+
+    @GetMapping("/pending/count")
+    @PreAuthorize("hasRole('MEDECIN')")
+    public long countPending() {
+        return userService.countPending();
     }
 }

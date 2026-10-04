@@ -11,4 +11,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     List<User> findByActifFalse();
     Optional<User> findByResetToken(String resetToken);
+    long countByActifFalse();
 }

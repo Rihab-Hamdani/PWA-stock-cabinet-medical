@@ -16,8 +16,8 @@ spring:
     enabled: false
     baseline-on-migrate: true
   mail:
-    host: ${MAIL_HOST:smtp-relay.brevo.com}
-    port: ${MAIL_PORT:587}
+    host: smtp.gmail.com
+    port: 587
     username: ${MAIL_USER:}
     password: ${MAIL_PASSWORD:}
     properties:

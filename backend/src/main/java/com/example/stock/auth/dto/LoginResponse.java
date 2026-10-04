@@ -1,8 +1,5 @@
 package com.example.stock.auth.dto;
 
-import lombok.Getter;
-
-@Getter
 public class LoginResponse {
     private final String token;
     private final UserDto user;
@@ -12,4 +9,6 @@ public class LoginResponse {
         this.user = user;
     }
 
+    public String getToken() { return token; }
+    public UserDto getUser() { return user; }
 }

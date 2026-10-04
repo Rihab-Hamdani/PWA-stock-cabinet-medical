@@ -6,6 +6,8 @@ import com.example.stock.patient.service.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.stock.patient.dto.PatientDetailDto;
+import java.util.UUID;
 
 import java.util.List;
 
@@ -29,4 +31,17 @@ public class PatientController {
         service.create(request);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{id}")
+    public PatientDetailDto get(@PathVariable UUID id) {
+        return service.get(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable UUID id, @Valid @RequestBody PatientRequest request) {
+        service.update(id, request);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
