@@ -34,9 +34,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("select coalesce(sum(p.quantiteActuelle * p.prixUnitaireHt), 0) from Product p where p.actif = true")
     BigDecimal valeurStock();
 
-    @Query("select count(p) from Product p where p.categorieId = :categorieId")
-    long countByCategorieId(@Param("categorieId") java.util.UUID categorieId);
-
     @Query("select distinct p.unite from Product p where p.actif = true order by p.unite")
     List<String> findDistinctUnites();
 
@@ -48,6 +45,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         where p.actif = true and p.quantiteActuelle <= p.seuilAlerte
         order by (p.quantiteActuelle - p.seuilAlerte) asc
         """)
-
     List<ProductDto> findAlertes(Pageable pageable);
+
+    List<Product> findByCategorieIdAndActifTrue(UUID categorieId);
+
+    List<Product> findByCategorieIdAndDeletedAtIsNotNull(UUID categorieId);
 }

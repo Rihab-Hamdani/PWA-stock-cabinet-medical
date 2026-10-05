@@ -224,3 +224,7 @@ CREATE TABLE patients (
                           remarques         VARCHAR(500),
                           date_creation     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE categories ADD COLUMN purged_at TIMESTAMPTZ;
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS purged_at  TIMESTAMPTZ;
+ALTER TABLE products   ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
