@@ -64,3 +64,33 @@
   border-color: $danger;
   color: $danger-dark;
 }
+
+.edit-form {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-form label {
+  display: flex; flex-direction: column; gap: 5px;
+  font-size: 13px; color: $text-body;
+  input { @include field; }
+}
+
+.edit-actions { display: flex; gap: 8px; }
+
+.btn-cancel {
+  flex: 1;
+  border: 1px solid $border;
+  background: $white;
+  color: $text-body;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-primary { flex: 1; @include btn-primary; margin-top: 0; }
+
+.btn-outline { @include btn-outline; width: 100%; margin-bottom: 10px; }

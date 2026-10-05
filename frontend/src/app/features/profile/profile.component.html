@@ -5,16 +5,41 @@
 
   <main class="content">
     @if (auth.user(); as user) {
-      <div class="card">
-        <div class="avatar">{{ user.prenom.charAt(0) }}{{ user.nom.charAt(0) }}</div>
-        <div class="nom">{{ user.prenom }} {{ user.nom }}</div>
-        <div class="email">{{ user.email }}</div>
-        <span class="role-badge" [class.role-medecin]="user.role === 'MEDECIN'">
-          {{ user.role === 'MEDECIN' ? 'Médecin' : 'Secrétaire' }}
-        </span>
-      </div>
-    }
+      @if (!modeEdition()) {
+        <div class="card">
+          <div class="avatar">{{ user.prenom.charAt(0) }}{{ user.nom.charAt(0) }}</div>
+          <div class="nom">{{ user.prenom }} {{ user.nom }}</div>
+          <div class="email">{{ user.email }}</div>
+          @if (user.telephone) { <div class="email">{{ user.telephone }}</div> }
+          <span class="role-badge" [class.role-medecin]="user.role === 'MEDECIN'">
+            {{ user.role === 'MEDECIN' ? 'Médecin' : 'Secrétaire' }}
+          </span>
+        </div>
 
-    <button class="btn-logout" (click)="deconnexion()">Se déconnecter</button>
+        <button class="btn-outline" (click)="ouvrirEdition()">Modifier mon profil</button>
+        <button class="btn-logout" (click)="deconnexion()">Se déconnecter</button>
+      } @else {
+        <form class="edit-form" [formGroup]="form" (ngSubmit)="enregistrer()">
+          <label>Prénom
+            <input type="text" formControlName="prenom" />
+          </label>
+          <label>Nom
+            <input type="text" formControlName="nom" />
+          </label>
+          <label>Téléphone
+            <input type="tel" formControlName="telephone" />
+          </label>
+
+          @if (erreur()) { <p class="err">{{ erreur() }}</p> }
+
+          <div class="edit-actions">
+            <button type="button" class="btn-cancel" (click)="annulerEdition()">Annuler</button>
+            <button type="submit" class="btn-primary" [disabled]="form.invalid || enregistrement()">
+              {{ enregistrement() ? 'Enregistrement…' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      }
+    }
   </main>
 </div>

@@ -1,0 +1,37 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Historique des rendez-vous</span>
+  </header>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (joursGroupes().length === 0) {
+      <p class="info">Aucun rendez-vous enregistré.</p>
+    } @else {
+      @for (jour of joursGroupes(); track jour.date) {
+        <div class="day-block">
+          <button class="day-row" (click)="toggleJour(jour.date)">
+            <span class="day-label">{{ jour.date === 'Sans date' ? 'Sans date de RDV' : jour.date }}</span>
+            <span class="day-count">{{ jour.liste.length }} patient(s)</span>
+            <span class="chevron" [class.open]="jourOuvert() === jour.date">›</span>
+          </button>
+
+          @if (jourOuvert() === jour.date) {
+            <div class="patients-du-jour">
+              @for (p of jour.liste; track p.id) {
+                <a [routerLink]="['/patients', p.id]" class="patient-row">
+                  <div class="nom">{{ p.prenom }} {{ p.nom }}</div>
+                  <div class="meta">
+                    @if (p.examenDemande) { {{ p.examenDemande }} }
+                    @if (p.telephone) { · {{ p.telephone }} }
+                  </div>
+                </a>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </main>
+</div>

@@ -1,16 +1,18 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CategoryService } from '../../../core/services/category.service';
 import { ProductService } from '../../../core/services/product.service';
 import { SupplierService } from '../../../core/services/supplier.service';
+import { ConfirmService } from '../../../core/services/confirrm.service'
 import { Category, Product, Supplier } from '../../../core/models/models';
+
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss'
 })
@@ -19,7 +21,17 @@ export class CategoryListComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
   private supplierService = inject(SupplierService);
+  private confirmService = inject(ConfirmService);
   private router = inject(Router);
+
+  messageCorbeille = signal('');
+private timerMessage: ReturnType<typeof setTimeout> | null = null;
+
+private afficherMessageCorbeille(nom: string): void {
+  this.messageCorbeille.set(`« ${nom} » a été déplacée dans la corbeille.`);
+  if (this.timerMessage) clearTimeout(this.timerMessage);
+  this.timerMessage = setTimeout(() => this.messageCorbeille.set(''), 7000);
+}
 
   categories = signal<Category[]>([]);
   chargement = signal(true);
@@ -35,7 +47,6 @@ export class CategoryListComponent implements OnInit {
   unites = signal<string[]>([]);
   fournisseurs = signal<Supplier[]>([]);
 
-  // Formulaire "nouvelle catégorie"
   formulaireCategorieOuvert = signal(false);
   ajoutCategorieErreur = signal('');
   ajoutCategorieEnCours = signal(false);
@@ -47,7 +58,6 @@ export class CategoryListComponent implements OnInit {
     seuilAlerte: [5, [Validators.required, Validators.min(0)]]
   });
 
-  // Formulaire "ajouter un produit" (dans une catégorie ouverte)
   categorieProduitCible = signal<string | null>(null);
   ajoutProduitEnCours = signal(false);
   ajoutProduitErreur = signal('');
@@ -135,14 +145,19 @@ export class CategoryListComponent implements OnInit {
     this.router.navigate(['/produits', produit.id, 'modifier'], { state: { produit } });
   }
 
-  desactiver(produit: Product): void {
-    if (!confirm(`Désactiver "${produit.nom}" ?`)) return;
+  async desactiver(produit: Product): Promise<void> {
+    const ok = await this.confirmService.ask({
+      titre: 'Désactiver le produit',
+      message: `Désactiver "${produit.nom}" ?`,
+      texteConfirmer: 'Désactiver',
+      danger: true
+    });
+    if (!ok) return;
+
     this.productService.deactivate(produit.id).subscribe({
       next: () => this.chargerProduitsDe(produit.categorieId)
     });
   }
-
-  // ---- Nouvelle catégorie ----
 
   ajouterCategorie(): void {
     if (this.formCategorie.invalid) return;
@@ -166,24 +181,29 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  supprimerCategorie(cat: Category, event: Event): void {
+  async supprimerCategorie(cat: Category, event: Event): Promise<void> {
     event.stopPropagation();
-    if (!confirm(`Supprimer la catégorie "${cat.nom}" ?`)) return;
+    const ok = await this.confirmService.ask({
+      titre: 'Supprimer la catégorie',
+      message: `Supprimer définitivement "${cat.nom}" ?`,
+      texteConfirmer: 'Supprimer',
+      danger: true
+    });
+    if (!ok) return;
 
     this.enCoursSuppression.set(cat.id);
     this.categoryService.delete(cat.id).subscribe({
       next: () => {
-        this.enCoursSuppression.set(null);
-        this.charger();
-      },
+  this.enCoursSuppression.set(null);
+  this.afficherMessageCorbeille(cat.nom);
+  this.charger();
+},
       error: (err) => {
         this.enCoursSuppression.set(null);
         alert(err?.error?.message || 'Impossible de supprimer cette catégorie.');
       }
     });
   }
-
-  // ---- Ajouter un produit à une catégorie existante ----
 
   ouvrirAjoutProduit(categorieId: string, event: Event): void {
     event.stopPropagation();
@@ -229,10 +249,14 @@ export class CategoryListComponent implements OnInit {
           this.finaliserAjoutProduit(categorieId);
         }
       },
-      error: () => {
-        this.ajoutProduitEnCours.set(false);
-        this.ajoutProduitErreur.set("Impossible de créer le produit.");
-      }
+      error: (err) => {
+  this.ajoutCategorieEnCours.set(false);
+  this.ajoutCategorieErreur.set(
+    err?.status === 409
+      ? (err?.error?.message || 'Cette catégorie existe déjà.')
+      : "Impossible d'ajouter la catégorie."
+  );
+}
     });
   }
 

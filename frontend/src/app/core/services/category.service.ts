@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Category } from '../models/models';
+import { Category, CategoryTrash } from '../models/models';
 
 export interface CategoryCreateRequest {
   nom: string;
@@ -27,5 +27,17 @@ export class CategoryService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${environment.api}/categories/${id}`);
+  }
+
+  listTrash(): Observable<CategoryTrash[]> {
+    return this.http.get<CategoryTrash[]>(`${environment.api}/categories/corbeille`);
+  }
+
+  restore(id: string): Observable<void> {
+    return this.http.post<void>(`${environment.api}/categories/${id}/restaurer`, {});
+  }
+
+  deletePermanently(id: string): Observable<void> {
+    return this.http.delete<void>(`${environment.api}/categories/${id}/definitif`);
   }
 }

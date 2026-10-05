@@ -1,5 +1,29 @@
 export type Role = 'MEDECIN' | 'SECRETAIRE';
 
+export interface CategoryTrash {
+  id: string;
+  nom: string;
+  deletedAt: string;
+}
+
+export interface PatientDetail {
+  id: string;
+  email?: string;
+  prenom: string;
+  nom: string;
+  dateNaissance?: string;
+  sexe?: string;
+  telephone?: string;
+  adresse?: string;
+  examenDemande?: string;
+  medecinTraitant?: string;
+  clinique?: string;
+  dateRdv?: string;
+  assurance?: string;
+  montantPaye?: number;
+  remarques?: string;
+}
+
 export interface Dashboard {
   produitsEnRupture: number;
   produitsSousLeSeuil: number;

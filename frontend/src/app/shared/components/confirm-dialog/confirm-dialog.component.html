@@ -1,0 +1,18 @@
+@if (confirm.ouvert()) {
+  <div class="overlay" (click)="confirm.repondre(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="handle"></div>
+      <h3>{{ confirm.options().titre }}</h3>
+      <p>{{ confirm.options().message }}</p>
+      <div class="actions">
+        <button type="button" class="btn-annuler" (click)="confirm.repondre(false)">
+          {{ confirm.options().texteAnnuler || 'Annuler' }}
+        </button>
+        <button type="button" class="btn-confirmer" [class.danger]="confirm.options().danger"
+                (click)="confirm.repondre(true)">
+          {{ confirm.options().texteConfirmer || 'Confirmer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

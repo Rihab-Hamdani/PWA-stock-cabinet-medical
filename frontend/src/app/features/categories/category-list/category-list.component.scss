@@ -241,3 +241,34 @@
 
   &.active { background: $teal; color: $white; border-color: $teal; }
 }
+.topbar { display: flex; justify-content: space-between; align-items: center; }
+
+.btn-corbeille {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: $white; font-size: 13px; text-decoration: none;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 7px 12px; border-radius: 10px;
+}
+
+.link-corbeille-inline { color: $teal-dark; font-size: 13px; text-decoration: underline; }
+
+.toast {
+  position: fixed;
+  bottom: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 440px;
+  background: #1f2937;
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  z-index: 900;
+
+  a { color: #7ee0c3; font-weight: 600; text-decoration: none; white-space: nowrap; }
+}

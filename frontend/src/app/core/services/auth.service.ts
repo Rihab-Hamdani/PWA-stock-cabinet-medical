@@ -59,4 +59,9 @@ forgotPassword(email: string): Observable<void> {
 resetPassword(token: string, nouveauMotDePasse: string): Observable<void> {
   return this.http.post<void>(`${environment.api}/auth/reset-password`, { token, nouveauMotDePasse });
 }
+
+updateLocalUser(user: User): void {
+  localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+  this.currentUser.set(user);
+}
 }

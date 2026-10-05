@@ -17,6 +17,15 @@ export class UserService {
   }
 
   reject(id: string): Observable<void> {
-    return this.http.delete<void>(`${environment.api}/users/${id}`);
+    return this.
+    http.delete<void>(`${environment.api}/users/${id}`);
   }
+
+  updateMyProfile(payload: { prenom: string; nom: string; telephone?: string }): Observable<User> {
+  return this.http.put<User>(`${environment.api}/users/me`, payload);
+}
+
+countPending(): Observable<number> {
+  return this.http.get<number>(`${environment.api}/users/pending/count`);
+}
 }

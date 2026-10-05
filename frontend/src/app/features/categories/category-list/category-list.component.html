@@ -1,7 +1,14 @@
 <div class="page">
   <header class="topbar">
-    <span class="name">Stock</span>
-  </header>
+  <span class="name">Stock</span>
+  <a routerLink="/categories/corbeille" class="btn-corbeille">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+    </svg>
+    Corbeille
+  </a>
+</header>
 
   <div class="filters">
     <input
@@ -176,7 +183,12 @@
             <input type="number" formControlName="seuilAlerte" min="0" />
           </label>
 
-          @if (ajoutCategorieErreur()) { <p class="err">{{ ajoutCategorieErreur() }}</p> }
+          @if (ajoutCategorieErreur()) {
+  <p class="err">{{ ajoutCategorieErreur() }}</p>
+  @if (ajoutCategorieErreur().includes('corbeille')) {
+    <a routerLink="/categories/corbeille" class="link-corbeille-inline">Ouvrir la corbeille</a>
+  }
+}
 
           <div class="add-actions">
             <button type="button" class="btn-cancel" (click)="formulaireCategorieOuvert.set(false)">Annuler</button>
@@ -188,4 +200,10 @@
       }
     </div>
   </main>
+  @if (messageCorbeille()) {
+  <div class="toast">
+    <span>{{ messageCorbeille() }}</span>
+    <a routerLink="/categories/corbeille">Voir la corbeille</a>
+  </div>
+}
 </div>

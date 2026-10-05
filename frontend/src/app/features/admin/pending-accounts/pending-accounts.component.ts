@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
+import { ConfirmService } from '../../../core/services/confirrm.service';
 import { User } from '../../../core/models/models';
 
 @Component({
@@ -10,6 +11,7 @@ import { User } from '../../../core/models/models';
 })
 export class PendingAccountsComponent implements OnInit {
   private userService = inject(UserService);
+  private confirmService = inject(ConfirmService);
 
   comptes = signal<User[]>([]);
   chargement = signal(true);
@@ -45,8 +47,15 @@ export class PendingAccountsComponent implements OnInit {
     });
   }
 
-  rejeter(id: string): void {
-    if (!confirm('Supprimer définitivement cette demande de compte ?')) return;
+  async rejeter(id: string): Promise<void> {
+    const ok = await this.confirmService.ask({
+      titre: 'Rejeter la demande',
+      message: 'Supprimer définitivement cette demande de compte ?',
+      texteConfirmer: 'Rejeter',
+      danger: true
+    });
+    if (!ok) return;
+
     this.enCours.set(id);
     this.userService.reject(id).subscribe({
       next: () => {

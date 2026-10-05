@@ -1,0 +1,33 @@
+<div class="page">
+  <header class="topbar">
+    <a routerLink="/categories" class="back">‹ Stock</a>
+    <span class="name">Corbeille</span>
+  </header>
+
+  <main class="content">
+    @if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (items().length === 0) {
+      <p class="info">La corbeille est vide.</p>
+    } @else {
+      @for (item of items(); track item.id) {
+        <div class="trash-card">
+          <div class="nom">{{ item.nom }}</div>
+          <div class="meta">{{ tempsRestant(item.deletedAt) }}</div>
+          <div class="actions">
+            <button type="button" class="btn-delete"
+                    [disabled]="enCours() === item.id"
+                    (click)="supprimerDefinitivement(item)">
+              Supprimer définitivement
+            </button>
+            <button type="button" class="btn-restore"
+                    [disabled]="enCours() === item.id"
+                    (click)="restaurer(item)">
+              Restaurer
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </main>
+</div>

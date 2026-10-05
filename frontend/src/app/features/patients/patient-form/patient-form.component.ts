@@ -21,6 +21,8 @@ export class PatientFormComponent {
   examens = ['EEG de veille', 'EEG de sommeil', 'EMG 2 membres', 'EMG 4 membres', 'EMG avec test myasthénie', 'PEA', 'PEV', 'ERG', 'PES', 'EFR / Spiro', 'Test cutané PVN', 'Autre'];
   medecins = ['Dr Dammak', 'Dr Bergaoui', 'Dr Manel', 'Autre'];
   cliniques = ['Echifa', 'La Douce', 'Internationale', 'Centre Arij', 'Autre'];
+  adresses = ['Libye', 'Djerba Houmt Souk', 'Médenine', 'Tataouine', 'Autre'];
+  assurances = ['Assurance', 'CNAM', 'Non assuré']; 
 
   form = this.fb.nonNullable.group({
     prenom: ['', Validators.required],
@@ -30,6 +32,7 @@ export class PatientFormComponent {
     sexe: [''],
     telephone: [''],
     adresse: [''],
+    adresseAutre: [''],
     examenDemande: [''],
     examenAutre: [''],
     medecinTraitant: [''],
@@ -55,7 +58,7 @@ export class PatientFormComponent {
       dateNaissance: v.dateNaissance || null,
       sexe: v.sexe || null,
       telephone: v.telephone || null,
-      adresse: v.adresse || null,
+      adresse: (v.adresse === 'Autre' ? v.adresseAutre : v.adresse) || null,
       examenDemande: (v.examenDemande === 'Autre' ? v.examenAutre : v.examenDemande) || null,
       medecinTraitant: (v.medecinTraitant === 'Autre' ? v.medecinAutre : v.medecinTraitant) || null,
       clinique: (v.clinique === 'Autre' ? v.cliniqueAutre : v.clinique) || null,

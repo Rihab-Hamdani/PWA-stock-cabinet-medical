@@ -1,0 +1,58 @@
+@use '../../../shared/styles/variables' as *;
+@use '../../../shared/styles/mixins' as *;
+
+:host { display: block; min-height: 100%; background: $bg-page; }
+
+.page { max-width: 480px; margin: 0 auto; }
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+}
+
+.content { padding: 18px; }
+
+.info { text-align: center; color: $text-muted; font-size: 14px; margin-top: 24px; }
+
+.day-block { @include card; margin-bottom: 10px; padding: 0; overflow: hidden; }
+
+.day-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: $gap-md;
+  cursor: pointer;
+  text-align: left;
+
+  .day-label { flex: 1; font-size: 14px; font-weight: 600; color: $text-dark; }
+  .day-count { font-size: 12px; color: $text-faint; }
+
+  .chevron {
+    font-size: 20px;
+    color: $text-faint;
+    transform: rotate(90deg);
+    transition: transform 0.15s;
+    &.open { transform: rotate(-90deg); }
+  }
+}
+
+.patients-du-jour {
+  border-top: 1px solid $border-soft;
+  padding: $gap-sm $gap-md;
+}
+
+.patient-row {
+  display: block;
+  padding: 8px 0;
+  border-bottom: 1px solid $border-soft;
+  text-decoration: none;
+
+  &:last-child { border-bottom: none; }
+
+  .nom { font-size: 14px; font-weight: 500; color: $text-dark; }
+  .meta { font-size: 12px; color: $text-faint; margin-top: 2px; }
+}

@@ -16,6 +16,8 @@
 .info { text-align: center; color: $text-muted; font-size: 14px; margin-top: 24px; }
 
 .patient-row {
+  display: block;
+  text-decoration: none;
   @include card;
   margin-bottom: 10px;
   .nom { font-size: 15px; font-weight: 600; color: $text-dark; }
@@ -36,3 +38,5 @@
   box-shadow: $shadow-raised;
   max-width: 480px;
 }
+.link-historique { color: $white; font-size: 12px; text-decoration: underline; }
+.topbar { display: flex; justify-content: space-between; align-items: center; }

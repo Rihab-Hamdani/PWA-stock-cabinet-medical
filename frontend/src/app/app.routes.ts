@@ -3,6 +3,12 @@ import { authGuard, medecinGuard } from './core/guards/auth.guard';
 import { ShellComponent } from './shared/layout/shell/shell.component';
 
 export const routes: Routes = [
+  
+  {
+  path: 'categories/corbeille',
+  loadComponent: () =>
+    import('./features/categories/category-trash/category-trash.component').then((m) => m.CategoryTrashComponent)
+},
   {
     path: 'login',
     loadComponent: () =>
@@ -57,6 +63,16 @@ export const routes: Routes = [
         path: 'patients',
         loadComponent: () =>
           import('./features/patients/patient-list/patient-list.component').then((m) => m.PatientListComponent)
+      },
+      {
+        path: 'patients/historique',
+        loadComponent: () =>
+        import('./features/patients/patient-history/patient-history.component').then((m) => m.PatientHistoryComponent)
+      },
+      {
+        path: 'patients/:id',
+        loadComponent: () =>
+        import('./features/patients/patient-detail/patient-detail.component').then((m) => m.PatientDetailComponent)
       },
       {
         path: 'patients/nouveau',
