@@ -81,6 +81,15 @@
         <input type="date" formControlName="dateRdv" />
       </label>
 
+      <label>Heure du rendez-vous
+  <input type="time" formControlName="heureRdv" />
+</label>
+<label>Statut
+  <select formControlName="statut">
+    @for (s of statuts; track s.valeur) { <option [value]="s.valeur">{{ s.libelle }}</option> }
+  </select>
+</label>
+
       <p class="section-title">Paiement</p>
       <label>Assurance
         <select formControlName="assurance">
@@ -88,6 +97,11 @@
           @for (a of assurances; track a) { <option [value]="a">{{ a }}</option> }
         </select>
       </label>
+
+      <label class="check">
+  <input type="checkbox" formControlName="paye" /> Payé
+</label>
+
       <label>Montant payé
         <input type="number" formControlName="montantPaye" min="0" step="0.01" />
       </label>

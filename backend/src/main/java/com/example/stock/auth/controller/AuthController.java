@@ -1,10 +1,6 @@
 package com.example.stock.auth.controller;
 
-import com.example.stock.auth.dto.LoginRequest;
-import com.example.stock.auth.dto.LoginResponse;
-import com.example.stock.auth.dto.RegisterRequest;
-import com.example.stock.auth.dto.ForgotPasswordRequest;
-import com.example.stock.auth.dto.ResetPasswordRequest;
+import com.example.stock.auth.dto.*;
 import com.example.stock.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -30,9 +26,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
-        authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/forgot-password")

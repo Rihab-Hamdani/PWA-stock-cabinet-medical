@@ -7,12 +7,13 @@ import com.example.stock.catalog.entity.Category;
 import com.example.stock.catalog.entity.Product;
 import com.example.stock.catalog.repository.CategoryRepository;
 import com.example.stock.catalog.repository.ProductRepository;
+import com.example.stock.inventory.dto.MovementEntreeRequest;
+import com.example.stock.inventory.service.MovementService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -25,10 +26,13 @@ public class CategoryService {
 
     private final CategoryRepository repository;
     private final ProductRepository productRepository;
+    private final MovementService movementService;
 
-    public CategoryService(CategoryRepository repository, ProductRepository productRepository) {
+    public CategoryService(CategoryRepository repository, ProductRepository productRepository,
+                           MovementService movementService) {
         this.repository = repository;
         this.productRepository = productRepository;
+        this.movementService = movementService;
     }
 
     public List<CategoryDto> search(String nom) {
@@ -46,10 +50,6 @@ public class CategoryService {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Une catégorie portant ce nom est dans la corbeille. Restaurez-la, ou supprimez-la définitivement depuis la corbeille pour libérer le nom.");
         }
-        if (repository.existsByNomIgnoreCaseAndDeletedAtIsNotNull(request.getNom())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Une catégorie portant ce nom est dans la corbeille. Restaurez-la, ou supprimez-la définitivement depuis la corbeille pour libérer le nom.");
-        }
 
         Category category = new Category();
         category.setNom(request.getNom());
@@ -60,8 +60,19 @@ public class CategoryService {
         product.setCategorieId(category.getId());
         product.setUnite(request.getUnite());
         product.setSeuilAlerte(request.getSeuilAlerte());
-        product.setPrixUnitaireHt(BigDecimal.ZERO);
+        product.setPrixUnitaireHt(request.getPrixUnitaireHt());
         productRepository.save(product);
+
+        if (request.getQuantiteInitiale() > 0) {
+            MovementEntreeRequest entree = new MovementEntreeRequest();
+            entree.setQuantite(request.getQuantiteInitiale());
+            entree.setPrixUnitaireHt(request.getPrixUnitaireHt());
+            entree.setFournisseurId(request.getFournisseurId());
+            entree.setFournisseurNom(request.getFournisseurNom());
+            entree.setFournisseurTelephone(request.getFournisseurTelephone());
+            entree.setNumeroFacture(request.getNumeroFacture());
+            movementService.enregistrerEntree(product.getId(), entree);
+        }
     }
 
     // ---- Corbeille ----

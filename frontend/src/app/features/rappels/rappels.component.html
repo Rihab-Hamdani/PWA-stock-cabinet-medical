@@ -1,0 +1,30 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Rappels</span>
+  </header>
+
+  <main class="content">
+    <div class="permission">
+      @if (!service.disponible) {
+        <p>Les notifications du navigateur ne sont disponibles qu'en HTTPS (version en ligne). En attendant, les alertes s'affichent dans l'application ouverte.</p>
+      } @else if (service.permission() === 'default') {
+        <button type="button" (click)="activer()">Activer les notifications du navigateur</button>
+      } @else if (service.permission() === 'granted') {
+        <p>Notifications du navigateur activées.</p>
+      } @else {
+        <p>Notifications bloquées : autorise-les dans les réglages du navigateur.</p>
+      }
+    </div>
+
+    @if (service.rappels().length === 0) {
+      <p class="info">Aucune alerte pour le moment.</p>
+    } @else {
+      @for (r of service.rappels(); track r.id) {
+        <button type="button" class="rappel" [attr.data-type]="r.type" (click)="ouvrir(r)">
+          <span class="titre">{{ r.titre }}</span>
+          <span class="message">{{ r.message }}</span>
+        </button>
+      }
+    }
+  </main>
+</div>

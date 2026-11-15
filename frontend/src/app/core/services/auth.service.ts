@@ -4,6 +4,10 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LoginResponse, Role, User } from '../models/models';
 
+export interface RegisterResponse {
+  actif: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
@@ -24,8 +28,10 @@ export class AuthService {
       .pipe(tap((res) => this.setSession(res)));
   }
 
-  register(nom: string, prenom: string, email: string, motDePasse: string): Observable<void> {
-    return this.http.post<void>(`${environment.api}/auth/register`, { nom, prenom, email, motDePasse });
+  register(nom: string, prenom: string, email: string, motDePasse: string): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${environment.api}/auth/register`, {
+      nom, prenom, email, motDePasse
+    });
   }
 
   logout(): void {
@@ -43,25 +49,28 @@ export class AuthService {
     const r = this.currentUser()?.role;
     return r != null && roles.includes(r);
   }
+
   private loadUser(): User | null {
     const raw = localStorage.getItem(this.USER_KEY);
     return raw ? (JSON.parse(raw) as User) : null;
   }
+
   private setSession(res: LoginResponse): void {
-  localStorage.setItem(this.TOKEN_KEY, res.token);
-  localStorage.setItem(this.USER_KEY, JSON.stringify(res.user));
-  this.currentUser.set(res.user);
-}
-forgotPassword(email: string): Observable<void> {
-  return this.http.post<void>(`${environment.api}/auth/forgot-password`, { email });
-}
+    localStorage.setItem(this.TOKEN_KEY, res.token);
+    localStorage.setItem(this.USER_KEY, JSON.stringify(res.user));
+    this.currentUser.set(res.user);
+  }
 
-resetPassword(token: string, nouveauMotDePasse: string): Observable<void> {
-  return this.http.post<void>(`${environment.api}/auth/reset-password`, { token, nouveauMotDePasse });
-}
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${environment.api}/auth/forgot-password`, { email });
+  }
 
-updateLocalUser(user: User): void {
-  localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-  this.currentUser.set(user);
-}
+  resetPassword(token: string, nouveauMotDePasse: string): Observable<void> {
+    return this.http.post<void>(`${environment.api}/auth/reset-password`, { token, nouveauMotDePasse });
+  }
+
+  updateLocalUser(user: User): void {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.currentUser.set(user);
+  }
 }

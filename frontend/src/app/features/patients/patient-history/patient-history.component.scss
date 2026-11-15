@@ -1,21 +1,30 @@
 @use '../../../shared/styles/variables' as *;
 @use '../../../shared/styles/mixins' as *;
 
-:host { display: block; min-height: 100%; background: $bg-page; }
+:host { @include page-host; }
 
-.page { max-width: 480px; margin: 0 auto; }
+.page { @include page-column; }
 
 .topbar {
-  background: $teal;
-  padding: 26px 22px;
-  .name { color: $white; font-size: 19px; font-weight: 600; }
+  @include topbar;
+  @include header-curve;
+
+  .name { @include topbar-title; }
 }
 
-.content { padding: 18px; }
+.content { padding: 20px $gutter 24px; }
 
-.info { text-align: center; color: $text-muted; font-size: 14px; margin-top: 24px; }
+.info { @include state-text; }
 
-.day-block { @include card; margin-bottom: 10px; padding: 0; overflow: hidden; }
+.day-block {
+  @include card;
+  margin-bottom: 10px;
+  padding: 0;
+  overflow: hidden;
+  transition: box-shadow $dur $ease;
+
+  &:has(.chevron.open) { box-shadow: $shadow-hover; border-color: $border; }
+}
 
 .day-row {
   width: 100%;
@@ -24,35 +33,57 @@
   gap: 10px;
   background: none;
   border: none;
-  padding: $gap-md;
+  padding: 16px;
+  min-height: 58px;
   cursor: pointer;
   text-align: left;
+  font-family: inherit;
+  transition: background $dur-fast $ease;
 
-  .day-label { flex: 1; font-size: 14px; font-weight: 600; color: $text-dark; }
-  .day-count { font-size: 12px; color: $text-faint; }
+  &:hover { background: $bg-subtle; }
+
+  .day-label { flex: 1; font-size: $fs-base; font-weight: 600; color: $text-dark; }
+
+  .day-count {
+    font-size: $fs-xs;
+    font-weight: 600;
+    color: $teal-dark;
+    background: $teal-light;
+    padding: 3px 9px;
+    border-radius: $radius-full;
+  }
 
   .chevron {
-    font-size: 20px;
-    color: $text-faint;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: $bg-page;
+    font-size: 18px;
+    color: $text-muted;
     transform: rotate(90deg);
-    transition: transform 0.15s;
-    &.open { transform: rotate(-90deg); }
+    transition: transform $dur $ease, background $dur $ease, color $dur $ease;
+
+    &.open { transform: rotate(-90deg); background: $teal-light; color: $teal; }
   }
 }
 
 .patients-du-jour {
   border-top: 1px solid $border-soft;
-  padding: $gap-sm $gap-md;
+  background: $bg-subtle;
+  padding: 4px 16px;
 }
 
 .patient-row {
   display: block;
-  padding: 8px 0;
+  padding: 11px 4px;
   border-bottom: 1px solid $border-soft;
   text-decoration: none;
+  border-radius: 8px;
+  transition: background $dur-fast $ease;
 
   &:last-child { border-bottom: none; }
+  &:hover { background: $white; }
 
-  .nom { font-size: 14px; font-weight: 500; color: $text-dark; }
-  .meta { font-size: 12px; color: $text-faint; margin-top: 2px; }
+  .nom { font-size: $fs-base; font-weight: 600; color: $text-dark; }
+  .meta { font-size: $fs-sm; color: $text-muted; margin-top: 2px; }
 }

@@ -1,61 +1,27 @@
-@use '../../../shared/styles/variables' as *;
-@use '../../../shared/styles/mixins' as *;
+ @use '../../../shared/styles/auth' as *;
 
-.login-page {
-  min-height: 100vh;
+@include auth-layout;
+.succes-box {
+  text-align: center;
+  padding: 8px 4px 0;
+
+  h2 { font-size: 18px; margin: 12px 0 8px; color: #111827; }
+  p { font-size: 14px; line-height: 1.5; color: #4b5563; margin: 0 0 10px; }
+  strong { color: #111827; word-break: break-all; }
+}
+
+.succes-icone {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #d1fae5;
+  color: #047857;
+  font-size: 30px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
 }
-
-.login-card {
-  width: 100%;
-  max-width: 380px;
-  background: $white;
-  border-radius: $radius-lg;
-  padding: 40px 32px;
-  box-shadow: $shadow-raised;
-}
-
-.brand {
-  text-align: center;
-  margin-bottom: 32px;
-
-  .logo {
-    width: 74px; height: 74px;
-    border-radius: 20px;
-    background: $teal;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-    i { font-size: 38px; color: $white; }
-  }
-  h1 { font-size: 22px; font-weight: 600; color: $text-dark; margin: 0; }
-  p  { font-size: 14px; color: $text-muted; margin: 4px 0 0; }
-}
-
-form { display: flex; flex-direction: column; gap: 16px; }
-
-label {
-  display: flex; flex-direction: column; gap: 6px;
-  font-size: 13px; font-weight: 500; color: $text-body;
-  input { @include field; }
-}
-
-.err { color: $danger-dark; font-size: 13px; margin: 0; }
-
-button { @include btn-primary; margin-top: 4px; }
-.success {
-  text-align: center;
-  color: $success;
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-.back-link {
-  display: block;
-  text-align: center;
-  margin-top: 12px;
-  font-size: 13px;
-  color: $teal;
-}
+.hint { font-size: 13px; color: #6b7280; margin-top: 8px; }
+.aide { display: block; margin-top: 4px; font-size: 12px; color: #6b7280; }

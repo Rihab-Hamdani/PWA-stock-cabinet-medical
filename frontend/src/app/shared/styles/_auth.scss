@@ -1,0 +1,106 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Mise en page commune des écrans d'authentification
+// (connexion, inscription, mot de passe oublié, réinitialisation)
+@mixin auth-layout {
+  .login-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 18px;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(20, 184, 166, 0.22) 0%, rgba(20, 184, 166, 0) 60%),
+      radial-gradient(80% 50% at 100% 110%, rgba(15, 118, 110, 0.12) 0%, rgba(15, 118, 110, 0) 60%),
+      $bg-page;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 390px;
+    background: $white;
+    border-radius: 24px;
+    padding: 36px 28px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 2px rgba(15, 42, 37, 0.04), 0 20px 50px rgba(15, 42, 37, 0.10);
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 28px;
+
+    .logo {
+      width: 68px; height: 68px;
+      border-radius: 20px;
+      background: $header-gradient;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      i { font-size: 34px; color: $white; }
+    }
+
+    h1 {
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: $text-dark;
+      margin: 0;
+    }
+    p { font-size: $fs-base; color: $text-muted; margin: 6px 0 0; }
+  }
+
+  form { display: flex; flex-direction: column; gap: 16px; }
+
+  label {
+    @include field-label;
+    input { @include field; }
+  }
+
+  button { @include btn-primary; margin-top: 6px; }
+
+  .err {
+    color: $danger-dark;
+    background: $danger-light;
+    border: 1px solid $danger-border;
+    border-radius: $radius-sm;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .success {
+    text-align: center;
+    color: $teal-dark;
+    background: $teal-light;
+    border-radius: $radius-sm;
+    padding: 12px;
+    font-size: $fs-base;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $teal;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  .forgot-link {
+    align-self: flex-end;
+    font-size: $fs-sm;
+    font-weight: 600;
+    color: $teal;
+    text-decoration: none;
+    margin-top: -8px;
+
+    &:hover { text-decoration: underline; }
+  }
+}

@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "patients")
@@ -22,6 +23,9 @@ public class Patient extends BaseEntity {
     private String medecinTraitant;
     private String clinique;
     private LocalDate dateRdv;
+    private LocalTime heureRdv;
+    private String statut = "PLANIFIE";
+    private boolean paye = false;
     private String assurance;
     private BigDecimal montantPaye;
     private String remarques;
@@ -48,6 +52,12 @@ public class Patient extends BaseEntity {
     public void setClinique(String clinique) { this.clinique = clinique; }
     public LocalDate getDateRdv() { return dateRdv; }
     public void setDateRdv(LocalDate dateRdv) { this.dateRdv = dateRdv; }
+    public LocalTime getHeureRdv() { return heureRdv; }
+    public void setHeureRdv(LocalTime heureRdv) { this.heureRdv = heureRdv; }
+    public String getStatut() { return statut; }
+    public void setStatut(String statut) { this.statut = statut; }
+    public boolean isPaye() { return paye; }
+    public void setPaye(boolean paye) { this.paye = paye; }
     public String getAssurance() { return assurance; }
     public void setAssurance(String assurance) { this.assurance = assurance; }
     public BigDecimal getMontantPaye() { return montantPaye; }

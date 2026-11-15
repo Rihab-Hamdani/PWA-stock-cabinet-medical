@@ -1,67 +1,306 @@
+@use 'sass:color';
 @use 'variables' as *;
+
+// ======================================================
+// Mise en page
+// ======================================================
+
+// :host d'une page
+@mixin page-host {
+  display: block;
+  min-height: 100%;
+  background: $bg-page;
+}
+
+// Colonne centrée mobile
+@mixin page-column {
+  max-width: $max-width;
+  margin: 0 auto;
+}
+
+// En-tête teal (respecte l'encoche)
+@mixin topbar {
+  background: $teal;
+  padding: calc(22px + env(safe-area-inset-top)) 22px 22px;
+  color: $white;
+}
+
+// Arrondi bas du dernier bloc teal de l'en-tête
+@mixin header-curve {
+  border-radius: 0 0 $radius-lg $radius-lg;
+  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.18);
+}
+
+@mixin topbar-title {
+  color: $white;
+  font-size: $fs-xl;
+  font-weight: 700;
+  letter-spacing: $tracking-tight;
+}
+
+// Bouton rond translucide dans l'en-tête (retour, cloche)
+@mixin topbar-icon-btn {
+  width: 40px; height: 40px;
+  border-radius: $radius-md;
+  background: rgba(255, 255, 255, 0.16);
+  border: none;
+  color: $white;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background $dur-fast $ease;
+
+  &:hover  { background: rgba(255, 255, 255, 0.24); }
+  &:active { background: rgba(255, 255, 255, 0.30); }
+}
+
+// Lien en pastille dans l'en-tête
+@mixin topbar-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: $white;
+  font-size: $fs-sm;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 7px 12px;
+  border-radius: $radius-full;
+  white-space: nowrap;
+  transition: background $dur-fast $ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.26); }
+}
+
+// ======================================================
+// Surfaces
+// ======================================================
 
 // Carte blanche standard
 @mixin card {
   background: $white;
   border-radius: $radius;
   padding: $gap-md;
+  border: 1px solid $border-soft;
   box-shadow: $shadow-card;
+}
+
+// Élément cliquable : léger retour au toucher
+@mixin pressable {
+  cursor: pointer;
+  transition: transform $dur-fast $ease, box-shadow $dur $ease, border-color $dur $ease;
+
+  @media (hover: hover) {
+    &:hover { box-shadow: $shadow-hover; border-color: $border; }
+  }
+  &:active { transform: scale(0.985); }
+}
+
+// Pavé coloré contenant une icône
+@mixin icon-tile($size: 38px) {
+  width: $size; height: $size;
+  border-radius: $radius-sm;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: $size * 0.5;
+}
+
+// ======================================================
+// Boutons
+// ======================================================
+
+@mixin btn-base {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: $radius-md;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform $dur-fast $ease, background $dur $ease,
+              box-shadow $dur $ease, border-color $dur $ease, color $dur $ease;
+
+  &:active:not(:disabled) { transform: scale(0.98); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 }
 
 // Bouton principal (teal plein)
 @mixin btn-primary {
+  @include btn-base;
   background: $teal;
   color: $white;
   border: none;
-  border-radius: 12px;
-  padding: 13px;
-  font-size: 15px;
-  font-weight: 500;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: $fs-md;
   width: 100%;
-  cursor: pointer;
-  transition: transform 0.08s, background 0.15s;
+  box-shadow: $shadow-btn;
 
-  &:active { transform: scale(0.99); }
-  &:hover  { background: $teal-dark; }
-  &:disabled { opacity: 0.55; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: $teal-dark; }
 }
 
-// Bouton secondaire (contour)
+// Bouton secondaire (gris neutre, ex. Annuler)
+@mixin btn-secondary {
+  @include btn-base;
+  background: $white;
+  color: $text-body;
+  border: 1px solid $border;
+  min-height: 46px;
+  padding: 10px 14px;
+  font-size: $fs-base;
+
+  &:hover:not(:disabled) { background: $bg-subtle; border-color: color.adjust($border, $lightness: -6%); }
+}
+
+// Bouton contour teal
 @mixin btn-outline {
+  @include btn-base;
   background: $white;
   color: $teal;
-  border: 1px solid $teal;
-  border-radius: 12px;
-  padding: 12px;
-  font-size: 15px;
+  border: 1.5px solid $teal;
+  min-height: 48px;
+  padding: 11px 16px;
+  font-size: $fs-md;
+
+  &:hover:not(:disabled) { background: $teal-light; }
+}
+
+// Bouton destructif discret
+@mixin btn-danger-soft {
+  @include btn-base;
+  background: $danger-light;
+  color: $danger-dark;
+  border: 1px solid $danger-border;
+  min-height: 48px;
+  padding: 11px 16px;
+  font-size: $fs-md;
+
+  &:hover:not(:disabled) { background: color.adjust($danger-light, $lightness: -3%); }
+}
+
+// Petit bouton d'action dans une ligne
+@mixin btn-sm {
+  @include btn-base;
+  min-height: 34px;
+  padding: 6px 14px;
+  border-radius: $radius-sm;
+  font-size: $fs-sm;
+  flex-shrink: 0;
+}
+
+// Bouton carré à icône
+@mixin btn-icon {
+  @include btn-base;
+  width: 36px; min-height: 36px;
+  padding: 0;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: $white;
+  font-size: 17px;
+}
+
+// Bouton flottant
+@mixin fab {
+  position: fixed;
+  width: 56px; height: 56px;
+  border-radius: 18px;
+  background: $header-gradient;
+  color: $white;
+  font-size: 26px;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  box-shadow: $shadow-raised, 0 0 0 4px rgba(255, 255, 255, 0.7);
+  transition: transform $dur-fast $ease, box-shadow $dur $ease;
+  z-index: 50;
+
+  &:hover  { box-shadow: 0 12px 28px rgba(15, 118, 110, 0.32), 0 0 0 4px rgba(255, 255, 255, 0.7); }
+  &:active { transform: scale(0.94); }
+}
+
+// Onglet segmenté
+@mixin segment {
+  flex: 1;
+  border: 1px solid $border;
+  background: $white;
+  color: $text-body;
+  border-radius: $radius-sm;
+  padding: 9px 8px;
+  font-family: inherit;
+  font-size: $fs-sm;
   font-weight: 500;
   cursor: pointer;
+  transition: background $dur $ease, color $dur $ease, border-color $dur $ease;
 
-  &:active { transform: scale(0.99); }
+  &:hover { border-color: $teal-mid; }
+  &.active {
+    background: $teal; color: $white; border-color: $teal; font-weight: 600;
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+  }
 }
+
+// ======================================================
+// Formulaires
+// ======================================================
 
 // Champ de formulaire
 @mixin field {
   width: 100%;
+  min-height: 48px;
   border: 1px solid $border;
-  border-radius: 12px;
+  border-radius: $radius-md;
   padding: 12px 14px;
-  font-size: 15px;
+  font-family: inherit;
+  font-size: 16px; // évite le zoom iOS
+  color: $text-dark;
   background: $white;
   box-sizing: border-box;
-  transition: border-color 0.15s;
+  transition: border-color $dur $ease, box-shadow $dur $ease;
+
+  &::placeholder { color: $text-faint; }
+  &:hover:not(:focus):not(:disabled) { border-color: color.adjust($border, $lightness: -8%); }
 
   &:focus {
     outline: none;
     border-color: $teal;
+    box-shadow: $focus-ring;
   }
+
+  &:disabled { background: $bg-subtle; color: $text-muted; }
 }
+
+// Libellé de champ (label contenant l'input)
+@mixin field-label {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px; font-weight: 600; color: $text-body;
+}
+
+// ======================================================
+// Texte
+// ======================================================
 
 // Pastille de statut
 @mixin pill {
-  font-size: 11px;
-  padding: 3px 9px;
-  border-radius: 20px;
-  font-weight: 500;
+  font-size: $fs-xs;
+  padding: 4px 10px;
+  border-radius: $radius-full;
+  font-weight: 600;
   display: inline-block;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+// Titre de section (petites capitales)
+@mixin section-label {
+  font-size: $fs-xs;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: $tracking-caps;
+  color: $text-muted;
+}
+
+// Message vide / chargement / erreur
+@mixin state-text {
+  text-align: center;
+  font-size: $fs-base;
+  color: $text-muted;
+  margin-top: 28px;
 }

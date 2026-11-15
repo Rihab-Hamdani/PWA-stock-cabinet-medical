@@ -26,6 +26,10 @@ spring:
           auth: true
           starttls:
             enable: true
+            required: true
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
 
 server:
   port: ${PORT:8090}
@@ -42,12 +46,15 @@ stock:
     heure-debut: 8
     heure-fin: 17
   mail:
-    from: ${MAIL_FROM:no-reply@cabinet.tn}
+    from: ${MAIL_FROM:}
+    from-name: ${MAIL_FROM_NAME:Cabinet Médical}
+  rdv:
+    # Rappel des rendez-vous X minutes avant l'heure prévue
+    rappel-minutes: ${RDV_RAPPEL_MINUTES:45}
+  frontend-url: ${FRONTEND_URL:http://localhost:4200}
   firebase:
     enabled: ${FIREBASE_ENABLED:false}
-  admin:
-    email: ${ADMIN_EMAIL:medecin@cabinet.tn}
-    password: ${ADMIN_PASSWORD:ChangeMoi123!}
+
 
 cors:
   allowed-origins: ${CORS_ORIGINS:http://localhost:4200}

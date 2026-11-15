@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
-import { UserService } from '../../../core/services/user.service';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from "../../../core/services/auth.service";
+import { PendingCountService } from '../../../core/services/pending-number.service';
+import { RappelService } from '../../../core/services/rappel.service';
 
 @Component({
   selector: 'app-shell',
@@ -12,26 +13,34 @@ import { UserService } from '../../../core/services/user.service';
 })
 export class ShellComponent implements OnInit, OnDestroy {
   auth = inject(AuthService);
-  private userService = inject(UserService);
+  private pending = inject(PendingCountService);
+  private router = inject(Router);
+  private rappelService = inject(RappelService);
 
-  comptesEnAttente = signal(0);
+  comptesEnAttente = this.pending.count;
+  annonce = this.rappelService.annonce;
   private timer: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit(): void {
+    this.rappelService.demarrer();
     if (this.auth.isMedecin()) {
-      this.chargerComptesEnAttente();
-      this.timer = setInterval(() => this.chargerComptesEnAttente(), 60000);
+      this.pending.refresh();
+      this.timer = setInterval(() => this.pending.refresh(), 30000);
     }
   }
 
   ngOnDestroy(): void {
+    this.rappelService.arreter();
     if (this.timer) clearInterval(this.timer);
   }
 
-  chargerComptesEnAttente(): void {
-    this.userService.countPending().subscribe({
-      next: (n) => this.comptesEnAttente.set(n),
-      error: () => {}
-    });
+  ouvrirAnnonce(): void {
+    const a = this.annonce();
+    this.rappelService.fermerAnnonce();
+    if (a) this.router.navigateByUrl(a.lien);
+  }
+
+  fermerAnnonce(): void {
+    this.rappelService.fermerAnnonce();
   }
 }

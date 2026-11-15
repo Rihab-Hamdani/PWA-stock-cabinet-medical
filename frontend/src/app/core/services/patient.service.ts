@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { PatientDto, PatientDetail, PatientRequest } from '../models/models';
+import { PatientDetail, PatientDto, PatientRequest, StatutRdv } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class PatientService {
@@ -10,6 +10,10 @@ export class PatientService {
 
   list(): Observable<PatientDto[]> {
     return this.http.get<PatientDto[]>(`${environment.api}/patients`);
+  }
+
+  agenda(du: string, au: string): Observable<PatientDto[]> {
+    return this.http.get<PatientDto[]>(`${environment.api}/patients/agenda`, { params: { du, au } });
   }
 
   get(id: string): Observable<PatientDetail> {
@@ -22,5 +26,17 @@ export class PatientService {
 
   update(id: string, request: PatientRequest): Observable<void> {
     return this.http.put<void>(`${environment.api}/patients/${id}`, request);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${environment.api}/patients/${id}`);
+  }
+
+  changerStatut(id: string, statut: StatutRdv): Observable<void> {
+    return this.http.patch<void>(`${environment.api}/patients/${id}/statut`, { statut });
+  }
+
+  changerPaiement(id: string, paye: boolean, montantPaye?: number): Observable<void> {
+    return this.http.patch<void>(`${environment.api}/patients/${id}/paiement`, { paye, montantPaye: montantPaye ?? null });
   }
 }

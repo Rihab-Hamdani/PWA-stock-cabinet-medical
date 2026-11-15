@@ -4,14 +4,27 @@
       <span class="greet">Bonjour,</span>
       <span class="name">{{ auth.user()?.prenom }} 👋</span>
     </div>
-    <button class="bell" aria-label="Notifications">
+    <button class="bell" routerLink="/rappels" aria-label="Rappels">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3l2 2H4l2-2v-3a7 7 0 0 1 4-6M9 17v1a3 3 0 0 0 6 0v-1"/>
       </svg>
+      @if (rappels.total() > 0) {
+        <span class="bell-badge">{{ rappels.total() }}</span>
+      }
     </button>
   </header>
 
   <main class="content">
+    @if (auth.isMedecin() && pending.count() > 0) {
+      <a routerLink="/comptes-en-attente" class="pending-banner">
+        <span class="pending-count">{{ pending.count() }}</span>
+        <span class="pending-text">
+          {{ pending.count() > 1 ? 'demandes de compte en attente' : 'demande de compte en attente' }}
+        </span>
+        <span class="pending-go">Voir ›</span>
+      </a>
+    }
+
     @if (chargement()) {
       <p class="info">Chargement…</p>
     }
@@ -34,48 +47,55 @@
         </div>
 
         @if (auth.isMedecin()) {
-  <div class="stat-card">
-    <span class="stat-label">Valeur du stock</span>
-    <div class="stat-value v-teal">{{ d.valeurDuStock | number:'1.0-0' }}<small> DT</small></div>
-  </div>
-  <div class="stat-card">
-    <span class="stat-label">Montant du jour</span>
-    <div class="stat-value v-dark">{{ d.montantDuJour | number:'1.0-0' }}<small> DT</small></div>
-  </div>
-  <div class="stat-card stat-wide">
-    <span class="stat-label">Montant perdu aujourd'hui</span>
-    <div class="stat-value v-danger">{{ d.montantPerdu | number:'1.0-0' }}<small> DT</small></div>
-  </div>
-} @else {
-  <div class="stat-card stat-wide">
-    <span class="stat-label">Mouvements aujourd'hui</span>
-    <div class="stat-value v-dark">{{ d.mouvementsAujourdHui }}</div>
-  </div>
-}
-      </div>
-
-      <h2 class="section-title">Alertes stock</h2>
-
-      @if (d.alertes.length === 0) {
-        <p class="info">Aucune alerte — tout est en stock normal.</p>
-      } @else {
-        @for (produit of d.alertes; track produit.id) {
-          <div class="alert-row">
-            <div class="icon" [class.warn]="produit.quantiteActuelle > 0">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
-                   [attr.stroke]="produit.quantiteActuelle === 0 ? '#D85A30' : '#BA7517'" stroke-width="2">
-                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/>
-              </svg>
-            </div>
-            <div class="info-bloc">
-              <div class="a-nom">{{ produit.nom }}</div>
-              <div class="a-detail">Stock actuel : {{ produit.quantiteActuelle }} / Seuil : {{ produit.seuilAlerte }}</div>
-            </div>
-            <button class="btn-voir" (click)="voirProduit(produit.id)">Voir</button>
+          <div class="stat-card">
+            <span class="stat-label">Dépenses stock du jour</span>
+            <div class="stat-value v-danger">{{ (d.depensesStockDuJour ?? 0) | number:'1.0-2' }}<small> DT</small></div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Recettes patients du jour</span>
+            <div class="stat-value v-teal">{{ (d.recettesPatientsDuJour ?? 0) | number:'1.0-2' }}<small> DT</small></div>
+          </div>
+        } @else {
+          <div class="stat-card stat-wide">
+            <span class="stat-label">Mouvements aujourd'hui</span>
+            <div class="stat-value v-dark">{{ d.mouvementsAujourdHui }}</div>
           </div>
         }
-      }
+      </div>
+
+      <h2 class="section-title">Rendez-vous du jour</h2>
+
+@if ((d.rdvDuJour).length === 0) {
+  <p class="info">Aucun rendez-vous aujourd'hui.</p>
+} @else {
+  @for (p of (d.rdvDuJour ); track p.id) {
+    <button type="button" class="rdv-row" [attr.data-statut]="p.statut" (click)="voirPatient(p.id)">
+      <span class="rdv-heure">{{ heure(p.heureRdv) }}</span>
+      <span class="rdv-info">
+        <span class="rdv-nom">{{ p.prenom }} {{ p.nom }}</span>
+        @if (p.examenDemande) { <span class="rdv-meta">{{ p.examenDemande }}</span> }
+      </span>
+      <span class="rdv-etat">{{ libelleStatut(p.statut) }}</span>
+      <span class="rdv-pay" [class.paye]="p.paye">{{ p.paye ? 'Payé' : 'Non payé' }}</span>
+    </button>
+  }
+}
+
+      @if (d.patientsEnAttentePaiement.length > 0) {
+  <h2 class="section-title">Patients à payer</h2>
+  @for (p of d.patientsEnAttentePaiement; track p.id) {
+    <button type="button" class="a-payer" [attr.data-statut]="p.statut" (click)="voirPatient(p.id)">
+      <span class="a-payer-heure">{{ heure(p.heureRdv) }}</span>
+      <span class="a-payer-info">
+        <span class="a-payer-nom">{{ p.prenom }} {{ p.nom }}</span>
+        @if (p.examenDemande) { <span class="a-payer-meta">{{ p.examenDemande }}</span> }
+      </span>
+      <span class="a-payer-etat">{{ libelleStatut(p.statut) }}</span>
+      <span class="a-payer-chip">À payer</span>
+    </button>
+  }
+}
+
     }
   </main>
-
-</div>
+</div>  

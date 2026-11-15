@@ -9,6 +9,12 @@ export interface CategoryCreateRequest {
   produitNom: string;
   unite: string;
   seuilAlerte: number;
+  quantiteInitiale: number;
+  prixUnitaireHt: number;
+  fournisseurId?: string | null;
+  fournisseurNom?: string | null;
+  fournisseurTelephone?: string | null;
+  numeroFacture?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -40,4 +46,6 @@ export class CategoryService {
   deletePermanently(id: string): Observable<void> {
     return this.http.delete<void>(`${environment.api}/categories/${id}/definitif`);
   }
+
+  
 }

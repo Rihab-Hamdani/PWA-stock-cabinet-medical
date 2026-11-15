@@ -1,42 +1,51 @@
 @use '../../../shared/styles/variables' as *;
 @use '../../../shared/styles/mixins' as *;
 
-:host { display: block; min-height: 100%; background: $bg-page; position: relative; }
+:host { @include page-host; position: relative; }
 
-.page { max-width: 480px; margin: 0 auto; padding-bottom: 80px; }
+.page { @include page-column; padding-bottom: 96px; }
 
 .topbar {
-  background: $teal;
-  padding: 26px 22px;
-  .name { color: $white; font-size: 19px; font-weight: 600; }
+  @include topbar;
+  @include header-curve;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .name { @include topbar-title; }
 }
 
-.content { padding: 18px; }
+.link-historique { @include topbar-chip; }
 
-.info { text-align: center; color: $text-muted; font-size: 14px; margin-top: 24px; }
+.content { padding: 20px $gutter 24px; }
+
+.info { @include state-text; }
 
 .patient-row {
-  display: block;
-  text-decoration: none;
   @include card;
+  @include pressable;
+  display: block;
+  position: relative;
+  text-decoration: none;
   margin-bottom: 10px;
-  .nom { font-size: 15px; font-weight: 600; color: $text-dark; }
-  .meta { font-size: 12px; color: $text-faint; margin-top: 3px; }
+  padding-right: 40px;
+
+  .nom { font-size: $fs-md; font-weight: 600; color: $text-dark; }
+  .meta { font-size: $fs-sm; color: $text-muted; margin-top: 3px; }
+
+  // Chevron d'accès à la fiche
+  &::after {
+    content: '›';
+    position: absolute;
+    right: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: $text-faint;
+  }
 }
 
 .fab {
-  position: fixed;
-  bottom: 74px;
-  right: 24px;
-  width: 54px; height: 54px;
-  border-radius: 50%;
-  background: $teal;
-  color: $white;
-  font-size: 28px;
-  display: flex; align-items: center; justify-content: center;
-  text-decoration: none;
-  box-shadow: $shadow-raised;
-  max-width: 480px;
+  @include fab;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: 22px;
 }
-.link-historique { color: $white; font-size: 12px; text-decoration: underline; }
-.topbar { display: flex; justify-content: space-between; align-items: center; }

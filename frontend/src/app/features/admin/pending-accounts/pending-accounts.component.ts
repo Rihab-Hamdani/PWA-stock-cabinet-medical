@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
 import { ConfirmService } from '../../../core/services/confirrm.service';
+import { PendingCountService } from '../../../core/services/pending-number.service';
 import { User } from '../../../core/models/models';
 
 @Component({
@@ -12,6 +13,7 @@ import { User } from '../../../core/models/models';
 export class PendingAccountsComponent implements OnInit {
   private userService = inject(UserService);
   private confirmService = inject(ConfirmService);
+  private pending = inject(PendingCountService);
 
   comptes = signal<User[]>([]);
   chargement = signal(true);
@@ -28,9 +30,10 @@ export class PendingAccountsComponent implements OnInit {
       next: (comptes) => {
         this.comptes.set(comptes);
         this.chargement.set(false);
+        this.pending.refresh();
       },
       error: () => {
-        this.erreur.set("Impossible de charger les comptes en attente.");
+        this.erreur.set('Impossible de charger les comptes en attente.');
         this.chargement.set(false);
       }
     });
@@ -42,6 +45,7 @@ export class PendingAccountsComponent implements OnInit {
       next: () => {
         this.comptes.update((liste) => liste.filter((c) => c.id !== id));
         this.enCours.set(null);
+        this.pending.refresh();
       },
       error: () => this.enCours.set(null)
     });
@@ -61,6 +65,7 @@ export class PendingAccountsComponent implements OnInit {
       next: () => {
         this.comptes.update((liste) => liste.filter((c) => c.id !== id));
         this.enCours.set(null);
+        this.pending.refresh();
       },
       error: () => this.enCours.set(null)
     });

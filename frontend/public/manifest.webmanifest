@@ -1,8 +1,8 @@
 {
-  "name": "frontend",
-  "short_name": "frontend",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "Cabinet Médical",
+  "short_name": "Cabinet",
+  "theme_color": "#0F766E",
+  "background_color": "#F2F6F5",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

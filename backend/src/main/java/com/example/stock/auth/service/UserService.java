@@ -6,8 +6,7 @@ import com.example.stock.auth.entity.User;
 import com.example.stock.auth.repository.UserRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.example.stock.shared.mail.EmailService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,11 +17,11 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
 
-    public UserService(UserRepository repository, JavaMailSender mailSender) {
+    public UserService(UserRepository repository, EmailService emailService) {
         this.repository = repository;
-        this.mailSender = mailSender;
+        this.emailService = emailService;
     }
 
     public List<UserDto> listPending() {
@@ -42,22 +41,26 @@ public class UserService {
         user.setActif(true);
         repository.save(user);
 
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(user.getEmail());
-            message.setSubject("Votre compte a été activé");
-            message.setText("Bonjour " + user.getPrenom() + ",\n\n"
-                    + "Votre compte sur l'application de gestion du cabinet a été validé par le médecin.\n"
-                    + "Vous pouvez désormais vous connecter avec votre email et votre mot de passe.\n\n"
-                    + "Cordialement.");
-            mailSender.send(message);
-        } catch (Exception e) {
-            // l'échec d'envoi ne doit pas empêcher l'activation
-        }
+        emailService.send(user.getEmail(),
+                "Votre compte a été activé — Cabinet Médical",
+                "Bonjour " + user.getPrenom() + ",\n\n"
+                        + "Votre compte sur l'application de gestion du cabinet a été validé par le médecin.\n"
+                        + "Vous pouvez désormais vous connecter avec votre email et votre mot de passe :\n"
+                        + emailService.frontendUrl() + "/login\n\n"
+                        + "Cordialement.");
     }
 
     public void reject(UUID id) {
-        repository.deleteById(id);
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Compte introuvable"));
+        repository.delete(user);
+
+        emailService.send(user.getEmail(),
+                "Votre demande de compte — Cabinet Médical",
+                "Bonjour " + user.getPrenom() + ",\n\n"
+                        + "Votre demande de création de compte n'a pas été acceptée par le médecin.\n"
+                        + "Pour toute question, merci de le contacter directement.\n\n"
+                        + "Cordialement.");
     }
 
     public UserDto updateMyProfile(String email, @NonNull UpdateProfileRequest request) {

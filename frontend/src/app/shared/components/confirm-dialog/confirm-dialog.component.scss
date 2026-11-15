@@ -1,68 +1,67 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(2px);
+  background: $overlay;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 2000;
-  animation: fade 0.15s ease-out;
+  animation: fade $dur ease-out;
 }
 
 .sheet {
-  background: #ffffff;
+  background: $white;
   width: 100%;
-  max-width: 480px;
-  border-radius: 22px 22px 0 0;
-  padding: 12px 22px 28px;
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.18);
-  animation: slide-up 0.22s ease-out;
+  max-width: $max-width;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 22px calc(24px + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.2);
+  animation: slide-up 0.28s $ease;
 }
 
 .handle {
   width: 40px;
-  height: 4px;
-  background: #d1d5db;
-  border-radius: 2px;
-  margin: 0 auto 18px;
+  height: 5px;
+  background: $border;
+  border-radius: $radius-full;
+  margin: 0 auto 20px;
 }
 
 h3 {
-  font-size: 17px;
+  font-size: $fs-lg;
   font-weight: 700;
-  color: #111827;
+  letter-spacing: $tracking-tight;
+  color: $text-dark;
   margin: 0 0 8px;
 }
 
 p {
-  font-size: 14px;
-  line-height: 1.5;
-  color: #4b5563;
-  margin: 0 0 22px;
+  font-size: $fs-base;
+  line-height: 1.55;
+  color: $text-muted;
+  margin: 0 0 24px;
 }
 
 .actions { display: flex; gap: 10px; }
 
-.btn-annuler,
+.btn-annuler { @include btn-secondary; flex: 1; min-height: 50px; font-size: $fs-md; }
+
 .btn-confirmer {
+  @include btn-primary;
   flex: 1;
-  padding: 14px 10px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-}
+  min-height: 50px;
 
-.btn-annuler {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
+  &.danger {
+    background: $danger;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    &:hover:not(:disabled) { background: $danger-dark; }
+  }
 }
-
-.btn-confirmer { background: #0f6e56; color: #ffffff; }
-.btn-confirmer.danger { background: #dc2626; }
 
 @keyframes slide-up {
   from { transform: translateY(100%); }

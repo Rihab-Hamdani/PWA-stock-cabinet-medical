@@ -3,12 +3,6 @@ import { authGuard, medecinGuard } from './core/guards/auth.guard';
 import { ShellComponent } from './shared/layout/shell/shell.component';
 
 export const routes: Routes = [
-  
-  {
-  path: 'categories/corbeille',
-  loadComponent: () =>
-    import('./features/categories/category-trash/category-trash.component').then((m) => m.CategoryTrashComponent)
-},
   {
     path: 'login',
     loadComponent: () =>
@@ -40,12 +34,33 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
       },
       {
+        path: 'agenda',
+        loadComponent: () =>
+          import('./features/agenda/agenda.component').then((m) => m.AgendaComponent)
+      },
+      {
+        path: 'rappels',
+        loadComponent: () =>
+          import('./features/rappels/rappels.component').then((m) => m.RappelsComponent)
+      },
+      {
         path: 'categories',
         loadComponent: () =>
           import('./features/categories/category-list/category-list.component').then((m) => m.CategoryListComponent)
       },
       {
+        path: 'categories/corbeille',
+        loadComponent: () =>
+          import('./features/categories/category-trash/category-trash.component').then((m) => m.CategoryTrashComponent)
+      },
+      { path: 'produits', redirectTo: 'categories', pathMatch: 'full' },
+      {
         path: 'produits/nouveau',
+        loadComponent: () =>
+          import('./features/products/product-form/product-form.component').then((m) => m.ProductFormComponent)
+      },
+      {
+        path: 'produits/:id/modifier',
         loadComponent: () =>
           import('./features/products/product-form/product-form.component').then((m) => m.ProductFormComponent)
       },
@@ -55,30 +70,26 @@ export const routes: Routes = [
           import('./features/products/product-detail/product-detail.component').then((m) => m.ProductDetailComponent)
       },
       {
-        path: 'produits/:id/modifier',
-        loadComponent: () =>
-          import('./features/products/product-form/product-form.component').then((m) => m.ProductFormComponent)
-      },
-      {
         path: 'patients',
         loadComponent: () =>
           import('./features/patients/patient-list/patient-list.component').then((m) => m.PatientListComponent)
-      },
-      {
-        path: 'patients/historique',
-        loadComponent: () =>
-        import('./features/patients/patient-history/patient-history.component').then((m) => m.PatientHistoryComponent)
-      },
-      {
-        path: 'patients/:id',
-        loadComponent: () =>
-        import('./features/patients/patient-detail/patient-detail.component').then((m) => m.PatientDetailComponent)
       },
       {
         path: 'patients/nouveau',
         loadComponent: () =>
           import('./features/patients/patient-form/patient-form.component').then((m) => m.PatientFormComponent)
       },
+      {
+        path: 'patients/historique',
+        loadComponent: () =>
+          import('./features/patients/patient-history/patient-history.component').then((m) => m.PatientHistoryComponent)
+      },
+      {
+        path: 'patients/:id',
+        loadComponent: () =>
+          import('./features/patients/patient-detail/patient-detail.component').then((m) => m.PatientDetailComponent)
+      },
+
       {
         path: 'comptes-en-attente',
         canActivate: [medecinGuard],

@@ -1,114 +1,123 @@
 @use '../../../shared/styles/variables' as *;
 @use '../../../shared/styles/mixins' as *;
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: $bg-page;
-}
+:host { @include page-host; }
 
-.page {
-  min-height: 100vh;
-  max-width: 480px;
-  margin: 0 auto;
-}
+.page { @include page-column; min-height: 100%; }
 
 .topbar {
-  background: $teal;
-  padding: 20px 22px;
+  @include topbar;
+  padding-bottom: 64px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  border-radius: 0 0 $radius-lg $radius-lg;
 
-  .back { color: $white; display: flex; }
-  .name { color: $white; font-size: 18px; font-weight: 600; }
+  .back { @include topbar-icon-btn; }
+  .name { @include topbar-title; font-size: 18px; }
 }
 
-.content { padding: 18px; }
+.content { padding: 0 $gutter 28px; margin-top: -46px; }
 
+// Carte principale qui chevauche l'en-tête
 .card {
   @include card;
-  margin-bottom: 24px;
+  position: relative;
+  padding: 20px 18px;
+  margin-bottom: 26px;
+  box-shadow: $shadow-raised;
+  border: none;
 
   &.alerte { border-left: 4px solid $danger; }
 }
 
 .cat-label {
-  font-size: 11px;
+  @include pill;
+  background: $teal-light;
+  color: $teal-dark;
   text-transform: uppercase;
-  letter-spacing: .04em;
-  color: $text-faint;
+  letter-spacing: $tracking-caps;
+  font-size: 10px;
 }
 
-.nom { font-size: 20px; font-weight: 700; color: $text-dark; margin: 4px 0 16px; }
+.nom {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: $text-dark;
+  margin: 10px 0 18px;
+  line-height: 1.2;
+}
 
 .stock-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid $border-soft;
 }
 
-.stock-label { font-size: 12px; color: $text-muted; display: block; margin-bottom: 4px; }
+.stock-label { font-size: $fs-sm; font-weight: 500; color: $text-muted; display: block; margin-bottom: 4px; }
 
 .stock-val {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 800;
-  color: $text-dark;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: $teal;
 
   &.val-alerte { color: $danger; }
-  .unite { font-size: 14px; font-weight: 400; color: $text-muted; }
+  .unite { font-size: $fs-base; font-weight: 500; letter-spacing: 0; color: $text-muted; }
 }
 
-.seuil-box { text-align: right; }
-.seuil-val { font-size: 15px; font-weight: 600; color: $text-body; }
+.seuil-box {
+  text-align: right;
+  background: $bg-subtle;
+  border-radius: $radius-sm;
+  padding: 8px 12px;
+}
+.seuil-val { font-size: $fs-md; font-weight: 700; color: $text-body; }
 
 .alerte-bar {
-  margin-top: 14px;
+  margin-top: 16px;
   background: $danger-light;
   color: $danger-dark;
+  border: 1px solid $danger-border;
   font-size: 13px;
   font-weight: 600;
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: $radius-sm;
 }
 
 .section-title {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: $text-muted;
+  @include section-label;
   margin: 0 4px 12px;
 }
 
 .action-row {
+  @include card;
+  @include pressable;
   width: 100%;
   display: flex;
   align-items: center;
   gap: 14px;
-  background: $white;
-  border: 1px solid $border;
-  border-radius: 12px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-family: inherit;
+  font-size: $fs-base;
   font-weight: 600;
   color: $text-dark;
-  cursor: pointer;
+  text-align: left;
 
-  &:disabled { opacity: .5; cursor: not-allowed; }
-  &.action-danger { color: $danger-dark; border-color: $danger-light; }
+  &:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  &.action-danger { color: $danger-dark; }
 }
 
-.icon {
-  width: 34px; height: 34px;
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
+.icon { @include icon-tile(38px); }
 
 .icon-minus { background: $warning-light; color: $warning-dark; }
 .icon-plus { background: $teal-light; color: $teal-dark; }
-.icon-edit { background: rgba(56,139,253,.12); color: #388BFD; }
+.icon-edit { background: $info-light; color: $info; }
 .icon-delete { background: $danger-light; color: $danger-dark; }
 
 .arrivage-form {
@@ -116,11 +125,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 10px;
+  margin: -4px 0 12px;
+  border-color: $teal-mid;
 
   label {
-    display: flex; flex-direction: column; gap: 5px;
-    font-size: 13px; color: $text-body;
+    @include field-label;
     input, select { @include field; }
   }
 }
@@ -135,24 +144,13 @@
   margin-bottom: 4px;
 }
 
-.tab {
-  flex: 1;
-  border: 1px solid $border;
-  background: $white;
-  color: $text-body;
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 12px;
-  cursor: pointer;
-
-  &.active { background: $teal; color: $white; border-color: $teal; }
-}
+.tab { @include segment; }
 
 .info-hist {
   text-align: center;
   font-size: 13px;
-  color: $text-faint;
-  padding: 10px 0;
+  color: $text-muted;
+  padding: 12px 0;
 }
 
 .hist-row {
@@ -164,12 +162,7 @@
   padding: 12px;
 }
 
-.hist-icon {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
+.hist-icon { @include icon-tile(34px); }
 
 .hist-entree .hist-icon { background: $teal-light; color: $teal-dark; }
 .hist-sortie .hist-icon { background: $warning-light; color: $warning-dark; }
@@ -179,16 +172,17 @@
 .hist-top {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: $fs-base;
   font-weight: 600;
   color: $text-dark;
 }
 
+.hist-qte { font-variant-numeric: tabular-nums; font-weight: 700; }
 .hist-sortie .hist-qte { color: $warning-dark; }
 .hist-entree .hist-qte { color: $teal-dark; }
 
 .hist-meta {
-  font-size: 11px;
-  color: $text-faint;
+  font-size: $fs-xs;
+  color: $text-muted;
   margin-top: 2px;
 }

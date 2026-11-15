@@ -1,0 +1,76 @@
+<div class="page">
+  <header class="topbar">
+    <span class="name">Agenda</span>
+    <a routerLink="/patients" class="lien">Liste des patients</a>
+  </header>
+
+  <main class="content">
+    <div class="mois-nav">
+      <button type="button" class="fleche" (click)="moisPrecedent()" aria-label="Mois précédent">‹</button>
+      <span class="mois-label">{{ libelleMois() }}</span>
+      <button type="button" class="fleche" (click)="moisSuivant()" aria-label="Mois suivant">›</button>
+      <button type="button" class="btn-today" (click)="aujourdhui()">Aujourd'hui</button>
+    </div>
+
+    <div class="grille">
+      @for (j of joursSemaine; track j) {
+        <div class="entete">{{ j }}</div>
+      }
+      @for (jour of grille(); track jour.date) {
+        <button type="button" class="cellule"
+                [class.autre-mois]="!jour.dansLeMois"
+                [class.selectionne]="jour.date === jourSelectionne()"
+                [class.aujourdhui]="jour.date === aujourdhuiIso"
+                (click)="choisir(jour.date)">
+          <span class="numero">{{ jour.numero }}</span>
+          @if (nombre(jour.date) > 0) {
+            <span class="pastille">{{ nombre(jour.date) }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    <div class="jour-titre">
+      <h2>{{ libelleJour() }}</h2>
+      <span>{{ rdvsDuJour().length }} rendez-vous</span>
+    </div>
+
+    @if (erreur()) {
+      <p class="info err">{{ erreur() }}</p>
+    } @else if (chargement()) {
+      <p class="info">Chargement…</p>
+    } @else if (rdvsDuJour().length === 0) {
+      <p class="info">Aucun rendez-vous ce jour.</p>
+    } @else {
+      @for (r of rdvsDuJour(); track r.id) {
+        <div class="rdv" [attr.data-statut]="r.statut">
+          <div class="rdv-haut" (click)="ouvrir(r)">
+            <span class="heure">{{ heure(r) }}</span>
+            <div class="identite">
+              <div class="nom">{{ r.prenom }} {{ r.nom }}</div>
+              <div class="meta">
+                @if (r.examenDemande) { {{ r.examenDemande }} }
+                @if (r.telephone) { · {{ r.telephone }} }
+              </div>
+            </div>
+            <span class="chip-statut" [attr.data-statut]="r.statut">{{ libelleStatut(r.statut) }}</span>
+          </div>
+
+          <div class="rdv-actions">
+            <select [value]="r.statut" (change)="changerStatut(r, $any($event.target).value)" aria-label="Statut">
+              @for (s of statuts; track s.valeur) {
+                <option [value]="s.valeur" [selected]="s.valeur === r.statut">{{ s.libelle }}</option>
+              }
+            </select>
+            <button type="button" class="chip-paye" [class.paye]="r.paye" (click)="basculerPaiement(r)">
+              {{ r.paye ? 'Payé' : 'À payer' }}
+            </button>
+            <button type="button" class="btn-petit" (click)="repeter(r)">Répéter</button>
+          </div>
+        </div>
+      }
+    }
+  </main>
+
+  <button type="button" class="fab" (click)="nouveau()" aria-label="Nouveau rendez-vous">+</button>
+</div>

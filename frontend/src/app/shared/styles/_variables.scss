@@ -1,39 +1,76 @@
 // ---- Palette ----
-$teal:          #0F6E56;
-$teal-dark:     #085041;
-$teal-light:    #E1F5EE;
-$teal-mid:      #9FE1CB;
+// Teal médical profond (contraste AA sur blanc)
+$teal:          #0F766E;
+$teal-dark:     #115E59;
+$teal-light:    #E6F6F3;
+$teal-mid:      #A7E9DC;
+$teal-bright:   #14B8A6;
 
-$danger:        #D85A30;
-$danger-light:  #FAECE7;
-$danger-dark:   #993C1D;
+// Dégradé des en-têtes
+$header-gradient: linear-gradient(135deg, #0F766E 0%, #0E9384 100%);
 
-$warning:       #BA7517;
-$warning-light: #FAEEDA;
-$warning-dark:  #854F0B;
+$danger:        #DC2626;
+$danger-light:  #FEF2F2;
+$danger-dark:   #991B1B;
+$danger-border: #FECACA;
 
-$success:       #1D9E75;
+$warning:       #D97706;
+$warning-light: #FFF7E6;
+$warning-dark:  #92400E;
+$warning-border:#FCD9A0;
+
+$success:       #059669;
+
+$info:          #2563EB;
+$info-light:    #EFF4FF;
 
 // ---- Neutres ----
-$text-dark:     #12312a;
-$text-body:     #3d4642;
-$text-muted:    #8a938f;
-$text-faint:    #a3aba7;
+$text-dark:     #0F2A25;
+$text-body:     #334155;
+$text-muted:    #64748B;
+$text-faint:    #94A3B8;
 
-$bg-page:       #92c4b3;
+$bg-page:       #F2F6F5;
+$bg-subtle:     #F8FAFA;
 $white:         #ffffff;
-$border:        #e0e5e3;
-$border-soft:   #eef1f0;
+$border:        #E2E8F0;
+$border-soft:   #EEF2F1;
+
+$toast-bg:      #1E293B;
+$overlay:       rgba(15, 23, 42, 0.5);
+
+// ---- Typographie ----
+$fs-xs:         11px;
+$fs-sm:         12px;
+$fs-base:       14px;
+$fs-md:         15px;
+$fs-lg:         17px;
+$fs-xl:         20px;
+$fs-2xl:        28px;
+$tracking-tight: -0.01em;
+$tracking-caps:  0.06em;
 
 // ---- Layout ----
-$radius-sm:     11px;
-$radius:        14px;
-$radius-lg:     18px;
+$radius-sm:     10px;
+$radius-md:     12px;
+$radius:        16px;
+$radius-lg:     22px;
+$radius-full:   999px;
 
 $gap-xs:        8px;
 $gap-sm:        12px;
 $gap-md:        16px;
 $gap-lg:        22px;
+$gutter:        18px;
+$max-width:     480px;
 
-$shadow-card:   0 1px 3px rgba(18, 49, 42, 0.06);
-$shadow-raised: 0 4px 14px rgba(18, 49, 42, 0.10);
+$shadow-card:   0 1px 2px rgba(15, 42, 37, 0.04), 0 4px 14px rgba(15, 42, 37, 0.05);
+$shadow-hover:  0 2px 4px rgba(15, 42, 37, 0.05), 0 8px 22px rgba(15, 42, 37, 0.08);
+$shadow-raised: 0 8px 24px rgba(15, 42, 37, 0.14);
+$shadow-btn:    0 1px 2px rgba(15, 118, 110, 0.20), 0 4px 12px rgba(15, 118, 110, 0.22);
+$focus-ring:    0 0 0 4px rgba(15, 118, 110, 0.14);
+
+// ---- Mouvement ----
+$ease:          cubic-bezier(0.2, 0.8, 0.2, 1);
+$dur-fast:      0.12s;
+$dur:           0.2s;

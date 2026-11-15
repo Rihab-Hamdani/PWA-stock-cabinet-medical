@@ -1,25 +1,21 @@
 package com.example.stock.auth.service;
 
-import com.example.stock.auth.dto.LoginRequest;
-import com.example.stock.auth.dto.LoginResponse;
-import com.example.stock.auth.dto.RegisterRequest;
-import com.example.stock.auth.dto.ResetPasswordRequest;
-import com.example.stock.auth.dto.UserDto;
+import com.example.stock.auth.dto.*;
 import com.example.stock.auth.entity.Role;
 import com.example.stock.auth.entity.User;
 import com.example.stock.auth.repository.UserRepository;
 import com.example.stock.auth.security.JwtService;
 import com.example.stock.auth.security.UserPrincipal;
+import com.example.stock.shared.mail.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
@@ -35,31 +31,39 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
                        JwtService jwtService,
                        PasswordEncoder passwordEncoder,
-                       JavaMailSender mailSender) {
+                       EmailService emailService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
-        this.mailSender = mailSender;
+        this.emailService = emailService;
     }
 
-    public void register(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+    private static String normaliser(String email) {
+        return email == null ? "" : email.trim().toLowerCase();
+    }
+
+    @Transactional
+    public RegisterResponse register(RegisterRequest request) {
+        String email = normaliser(request.getEmail());
+
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Un compte existe déjà avec cet email.");
         }
 
+        // Premier compte d'une base vide = la docteure : médecin, actif immédiatement.
         boolean estPremierCompte = userRepository.count() == 0;
 
         User user = new User();
         user.setNom(request.getNom());
         user.setPrenom(request.getPrenom());
-        user.setEmail(request.getEmail());
+        user.setEmail(email);
         user.setMotDePasse(passwordEncoder.encode(request.getMotDePasse()));
 
         if (estPremierCompte) {
@@ -71,13 +75,35 @@ public class AuthService {
         }
 
         userRepository.save(user);
+
+        if (!estPremierCompte) {
+            notifierMedecinsNouvelleInscription(user);
+        }
+        return new RegisterResponse(estPremierCompte);
+    }
+
+    private void notifierMedecinsNouvelleInscription(User secretaire) {
+        userRepository.findByRoleAndActifTrue(Role.MEDECIN).forEach(medecin -> {
+            boolean envoye = emailService.send(medecin.getEmail(),
+                    "Nouvelle demande de compte — Cabinet Médical",
+                    "Bonjour Dr " + medecin.getNom() + ",\n\n"
+                            + secretaire.getPrenom() + " " + secretaire.getNom()
+                            + " (" + secretaire.getEmail() + ") a créé un compte secrétaire.\n"
+                            + "Ce compte doit être validé avant de pouvoir se connecter :\n"
+                            + emailService.frontendUrl() + "\n\n"
+                            + "Cordialement.");
+            log.info("Email de demande de compte pour {} : {}", medecin.getEmail(),
+                    envoye ? "ENVOYÉ" : "ÉCHEC");
+        });
     }
 
     public LoginResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getMotDePasse()));
+        String email = normaliser(request.getEmail());
 
-        User user = userRepository.findByEmail(request.getEmail())
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, request.getMotDePasse()));
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("Identifiants invalides"));
 
         String token = jwtService.generateToken(new UserPrincipal(user));
@@ -88,25 +114,23 @@ public class AuthService {
         return new LoginResponse(token, dto);
     }
 
-    public void forgotPassword(String email) {
+    public void forgotPassword(String emailBrut) {
+        String email = normaliser(emailBrut);
         userRepository.findByEmail(email).ifPresent(user -> {
             String token = UUID.randomUUID().toString();
             user.setResetToken(token);
             user.setResetTokenExpiration(Instant.now().plus(1, ChronoUnit.HOURS));
             userRepository.save(user);
 
-            String lien = "http://localhost:4200/reinitialiser-mot-de-passe?token=" + token;
+            String lien = emailService.frontendUrl() + "/reinitialiser-mot-de-passe?token=" + token;
 
-            try {
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setTo(user.getEmail());
-                message.setSubject("Réinitialisation de votre mot de passe — Stock Cabinet");
-                message.setText("Bonjour " + user.getPrenom() + ",\n\n"
-                        + "Cliquez sur ce lien pour réinitialiser votre mot de passe (valable 1h) :\n"
-                        + lien + "\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.");
-                mailSender.send(message);
-            } catch (Exception e) {
-                log.warn("Envoi d'email impossible (SMTP non configuré) — lien de réinitialisation : {}", lien);
+            boolean envoye = emailService.send(user.getEmail(),
+                    "Réinitialisation de votre mot de passe — Cabinet Médical",
+                    "Bonjour " + user.getPrenom() + ",\n\n"
+                            + "Cliquez sur ce lien pour réinitialiser votre mot de passe (valable 1h) :\n"
+                            + lien + "\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.");
+            if (!envoye) {
+                log.warn("Lien de réinitialisation pour {} (email non envoyé) : {}", user.getEmail(), lien);
             }
         });
         // Pas d'exception si l'email n'existe pas : on ne révèle jamais si un compte existe ou non.
@@ -125,6 +149,4 @@ public class AuthService {
         user.setResetTokenExpiration(null);
         userRepository.save(user);
     }
-
-
 }

@@ -1,31 +1,29 @@
 @use '../../../shared/styles/variables' as *;
 @use '../../../shared/styles/mixins' as *;
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: $bg-page;
-}
+:host { @include page-host; }
 
-.page {
-  min-height: 100vh;
-  max-width: 480px;
-  margin: 0 auto;
-}
+.page { @include page-column; min-height: 100%; }
 
 .topbar {
-  background: $teal;
-  padding: 26px 22px;
-  .name { color: $white; font-size: 19px; font-weight: 600; }
+  @include topbar;
+  @include header-curve;
+
+  .name { @include topbar-title; }
 }
 
-.content { padding: 18px; }
+.content { padding: 20px $gutter 32px; }
 
-form { display: flex; flex-direction: column; gap: 14px; }
+form {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 18px;
+}
 
 label {
-  display: flex; flex-direction: column; gap: 6px;
-  font-size: 13px; font-weight: 500; color: $text-body;
+  @include field-label;
   input, select { @include field; }
 }
 

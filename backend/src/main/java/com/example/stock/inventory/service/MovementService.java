@@ -89,7 +89,8 @@ public class MovementService {
         movement.setMotif(motif);
         movementRepository.save(movement);
 
-        product.setQuantiteActuelle(product.getQuantiteActuelle() - quantite);
+        int ancienneQuantite = product.getQuantiteActuelle();
+        product.setQuantiteActuelle(ancienneQuantite - quantite);
         productRepository.save(product);
     }
 

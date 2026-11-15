@@ -61,6 +61,7 @@ public class ProductService {
         if (nouvelleQuantite < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Stock déjà à zéro.");
         }
+        int ancienneQuantite = product.getQuantiteActuelle();
         product.setQuantiteActuelle(nouvelleQuantite);
         repository.save(product);
     }

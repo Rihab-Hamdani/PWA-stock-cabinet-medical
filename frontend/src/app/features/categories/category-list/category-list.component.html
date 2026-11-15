@@ -167,36 +167,72 @@
         <button class="btn-outline" (click)="formulaireCategorieOuvert.set(true)">+ Nouvelle catégorie</button>
       } @else {
         <form class="add-form" [formGroup]="formCategorie" (ngSubmit)="ajouterCategorie()">
-          <p class="form-section-title">Nouvelle catégorie</p>
-          <label>Nom de la catégorie
-            <input type="text" formControlName="nom" />
-          </label>
+  <p class="form-section-title">Nouvelle catégorie</p>
+  <label>Nom de la catégorie
+    <input type="text" formControlName="nom" />
+  </label>
 
-          <p class="form-section-title">Premier produit</p>
-          <label>Nom du produit
-            <input type="text" formControlName="produitNom" />
-          </label>
-          <label>Unité
-            <input type="text" formControlName="unite" list="unites-datalist" />
-          </label>
-          <label>Seuil d'alerte
-            <input type="number" formControlName="seuilAlerte" min="0" />
-          </label>
+  <p class="form-section-title">Premier produit</p>
+  <label>Nom du produit
+    <input type="text" formControlName="produitNom" />
+  </label>
+  <label>Unité
+    <input type="text" formControlName="unite" list="unites-categorie" placeholder="pièce, boîte, bouteille 500ml…" />
+    <datalist id="unites-categorie">
+      @for (u of unites(); track u) { <option [value]="u"></option> }
+    </datalist>
+  </label>
+  <label>Seuil d'alerte
+    <input type="number" formControlName="seuilAlerte" min="0" />
+  </label>
 
-          @if (ajoutCategorieErreur()) {
-  <p class="err">{{ ajoutCategorieErreur() }}</p>
-  @if (ajoutCategorieErreur().includes('corbeille')) {
-    <a routerLink="/categories/corbeille" class="link-corbeille-inline">Ouvrir la corbeille</a>
+  <p class="form-section-title">Arrivage initial</p>
+  <label>Quantité reçue
+    <input type="number" formControlName="quantiteInitiale" min="0" />
+  </label>
+  <label>Prix unitaire HT
+    <input type="number" formControlName="prixUnitaireHt" min="0" step="0.01" />
+  </label>
+
+  <div class="fournisseur-tabs">
+    <button type="button" class="tab" [class.active]="modeFournisseurCategorie() === 'liste'" (click)="modeFournisseurCategorie.set('liste')">Choisir dans la liste</button>
+    <button type="button" class="tab" [class.active]="modeFournisseurCategorie() === 'nouveau'" (click)="modeFournisseurCategorie.set('nouveau')">Nouveau fournisseur</button>
+  </div>
+
+  @if (modeFournisseurCategorie() === 'liste') {
+    <label>Fournisseur
+      <select formControlName="fournisseurId">
+        <option value="">Aucun</option>
+        @for (f of fournisseurs(); track f.id) { <option [value]="f.id">{{ f.nom }}</option> }
+      </select>
+    </label>
+  } @else {
+    <label>Nom du fournisseur
+      <input type="text" formControlName="fournisseurNom" />
+    </label>
+    <label>Téléphone (optionnel)
+      <input type="tel" formControlName="fournisseurTelephone" />
+    </label>
   }
-}
 
-          <div class="add-actions">
-            <button type="button" class="btn-cancel" (click)="formulaireCategorieOuvert.set(false)">Annuler</button>
-            <button type="submit" class="btn-primary" [disabled]="formCategorie.invalid || ajoutCategorieEnCours()">
-              {{ ajoutCategorieEnCours() ? 'Ajout…' : 'Créer' }}
-            </button>
-          </div>
-        </form>
+  <label>N° de facture (optionnel)
+    <input type="text" formControlName="numeroFacture" />
+  </label>
+
+  @if (ajoutCategorieErreur()) {
+    <p class="err">{{ ajoutCategorieErreur() }}</p>
+    @if (ajoutCategorieErreur().includes('corbeille')) {
+      <a routerLink="/categories/corbeille" class="link-corbeille-inline">Ouvrir la corbeille</a>
+    }
+  }
+
+  <div class="add-actions">
+    <button type="button" class="btn-cancel" (click)="formulaireCategorieOuvert.set(false)">Annuler</button>
+    <button type="submit" class="btn-primary" [disabled]="formCategorie.invalid || ajoutCategorieEnCours()">
+      {{ ajoutCategorieEnCours() ? 'Ajout…' : 'Créer' }}
+    </button>
+  </div>
+</form>
       }
     </div>
   </main>

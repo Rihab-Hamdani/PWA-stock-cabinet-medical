@@ -6,6 +6,52 @@ export interface CategoryTrash {
   deletedAt: string;
 }
 
+export type StatutRdv = 'PLANIFIE' | 'EN_CONSULTATION' | 'TERMINE' | 'ANNULE';
+
+export const STATUTS_RDV: { valeur: StatutRdv; libelle: string }[] = [
+  { valeur: 'PLANIFIE', libelle: 'En attente' },
+  { valeur: 'EN_CONSULTATION', libelle: 'Chez la docteure' },
+  { valeur: 'TERMINE', libelle: 'Terminé' },
+  { valeur: 'ANNULE', libelle: 'Annulé' }
+];
+
+export interface StockNotification {
+  produitId: string;
+  nom: string;
+  unite: string;
+  quantite: number;
+  seuil: number;
+  rupture: boolean;
+}
+
+export interface RdvNotification {
+  patientId: string;
+  prenom: string;
+  nom: string;
+  examen: string | null;
+  date: string;
+  heure: string;
+  minutesRestantes: number;
+}
+
+export interface NotificationsDto {
+  rappelMinutes: number;
+  stock: StockNotification[];
+  rdv: RdvNotification[];
+}
+
+export interface PatientDto {
+  id: string;
+  prenom: string;
+  nom: string;
+  telephone?: string;
+  examenDemande?: string;
+  dateRdv?: string;
+  heureRdv?: string;
+  statut: StatutRdv;
+  paye: boolean;
+}
+
 export interface PatientDetail {
   id: string;
   email?: string;
@@ -19,19 +65,43 @@ export interface PatientDetail {
   medecinTraitant?: string;
   clinique?: string;
   dateRdv?: string;
+  heureRdv?: string;
+  statut: StatutRdv;
+  paye: boolean;
   assurance?: string;
   montantPaye?: number;
   remarques?: string;
+}
+
+export interface PatientRequest {
+  email?: string | null;
+  prenom: string;
+  nom: string;
+  dateNaissance?: string | null;
+  sexe?: string | null;
+  telephone?: string | null;
+  adresse?: string | null;
+  examenDemande?: string | null;
+  medecinTraitant?: string | null;
+  clinique?: string | null;
+  dateRdv?: string | null;
+  heureRdv?: string | null;
+  statut?: StatutRdv;
+  paye?: boolean;
+  assurance?: string | null;
+  montantPaye?: number | null;
+  remarques?: string | null;
 }
 
 export interface Dashboard {
   produitsEnRupture: number;
   produitsSousLeSeuil: number;
   mouvementsAujourdHui: number;
-  montantDuJour: number | null;
-  montantPerdu: number | null;
-  valeurDuStock: number | null;
+  depensesStockDuJour: number | null;
+  recettesPatientsDuJour: number | null;
   alertes: Product[];
+  patientsEnAttentePaiement: PatientDto[];
+  rdvDuJour: PatientDto[];
 }
 
 export interface User {
@@ -59,31 +129,6 @@ export interface MovementHistorique {
   utilisateurNom: string;
 }
 
-export interface PatientDto {
-  id: string;
-  prenom: string;
-  nom: string;
-  telephone?: string;
-  examenDemande?: string;
-  dateRdv?: string;
-}
-
-export interface PatientRequest {
-  email?: string | null;
-  prenom: string;
-  nom: string;
-  dateNaissance?: string | null;
-  sexe?: string | null;
-  telephone?: string | null;
-  adresse?: string | null;
-  examenDemande?: string | null;
-  medecinTraitant?: string | null;
-  clinique?: string | null;
-  dateRdv?: string | null;
-  assurance?: string | null;
-  montantPaye?: number | null;
-  remarques?: string | null;
-}
 
 export interface LoginResponse {
   token: string;
@@ -150,4 +195,14 @@ export interface Alert {
   dateCreation: string;
   dateCommande?: string;
   commandeParNom?: string;
+}
+
+export type TypeRappel = 'RDV_PROCHE' | 'STOCK_RUPTURE' | 'STOCK_BAS';
+
+export interface Rappel {
+  id: string;
+  type: TypeRappel;
+  titre: string;
+  message: string;
+  lien: string;
 }

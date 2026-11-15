@@ -51,12 +51,20 @@ private afficherMessageCorbeille(nom: string): void {
   ajoutCategorieErreur = signal('');
   ajoutCategorieEnCours = signal(false);
 
-  formCategorie = this.fb.nonNullable.group({
-    nom: ['', Validators.required],
-    produitNom: ['', Validators.required],
-    unite: ['pièce', Validators.required],
-    seuilAlerte: [5, [Validators.required, Validators.min(0)]]
-  });
+  modeFournisseurCategorie = signal<'liste' | 'nouveau'>('liste');
+
+formCategorie = this.fb.nonNullable.group({
+  nom: ['', Validators.required],
+  produitNom: ['', Validators.required],
+  unite: ['pièce', Validators.required],
+  seuilAlerte: [5, [Validators.required, Validators.min(0)]],
+  quantiteInitiale: [0, [Validators.required, Validators.min(0)]],
+  prixUnitaireHt: [0, [Validators.required, Validators.min(0)]],
+  fournisseurId: [''],
+  fournisseurNom: [''],
+  fournisseurTelephone: [''],
+  numeroFacture: ['']
+});
 
   categorieProduitCible = signal<string | null>(null);
   ajoutProduitEnCours = signal(false);
@@ -160,26 +168,47 @@ private afficherMessageCorbeille(nom: string): void {
   }
 
   ajouterCategorie(): void {
-    if (this.formCategorie.invalid) return;
+  if (this.formCategorie.invalid) return;
 
-    this.ajoutCategorieEnCours.set(true);
-    this.ajoutCategorieErreur.set('');
+  this.ajoutCategorieEnCours.set(true);
+  this.ajoutCategorieErreur.set('');
 
-    this.categoryService.create(this.formCategorie.getRawValue()).subscribe({
-      next: () => {
-        this.ajoutCategorieEnCours.set(false);
-        this.formulaireCategorieOuvert.set(false);
-        this.formCategorie.reset({ nom: '', produitNom: '', unite: 'pièce', seuilAlerte: 5 });
-        this.charger();
-      },
-      error: (err) => {
-        this.ajoutCategorieEnCours.set(false);
-        this.ajoutCategorieErreur.set(
-          err?.status === 409 ? 'Cette catégorie existe déjà.' : "Impossible d'ajouter la catégorie."
-        );
-      }
-    });
-  }
+  const v = this.formCategorie.getRawValue();
+  const liste = this.modeFournisseurCategorie() === 'liste';
+
+  this.categoryService.create({
+    nom: v.nom,
+    produitNom: v.produitNom,
+    unite: v.unite,
+    seuilAlerte: v.seuilAlerte,
+    quantiteInitiale: v.quantiteInitiale,
+    prixUnitaireHt: v.prixUnitaireHt,
+    fournisseurId: liste ? (v.fournisseurId || null) : null,
+    fournisseurNom: liste ? null : (v.fournisseurNom || null),
+    fournisseurTelephone: liste ? null : (v.fournisseurTelephone || null),
+    numeroFacture: v.numeroFacture || null
+  }).subscribe({
+    next: () => {
+      this.ajoutCategorieEnCours.set(false);
+      this.formulaireCategorieOuvert.set(false);
+      this.formCategorie.reset({
+        nom: '', produitNom: '', unite: 'pièce', seuilAlerte: 5, quantiteInitiale: 0,
+        prixUnitaireHt: 0, fournisseurId: '', fournisseurNom: '', fournisseurTelephone: '', numeroFacture: ''
+      });
+      this.modeFournisseurCategorie.set('liste');
+      this.supplierService.list().subscribe((f) => this.fournisseurs.set(f));
+      this.charger();
+    },
+    error: (err) => {
+      this.ajoutCategorieEnCours.set(false);
+      this.ajoutCategorieErreur.set(
+        err?.status === 409
+          ? (err?.error?.message || 'Cette catégorie existe déjà.')
+          : "Impossible d'ajouter la catégorie."
+      );
+    }
+  });
+}
 
   async supprimerCategorie(cat: Category, event: Event): Promise<void> {
     event.stopPropagation();

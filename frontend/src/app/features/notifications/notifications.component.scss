@@ -1,0 +1,72 @@
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
+
+:host { @include page-host; }
+
+.page {
+  @include page-column;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  @include topbar;
+  @include header-curve;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+
+  .name { @include topbar-title; }
+  .retour { @include topbar-icon-btn; }
+}
+
+.content { flex: 1; padding: 20px $gutter 24px; }
+
+.section-label {
+  @include section-label;
+  margin: 22px 2px 10px;
+}
+
+.vide { font-size: $fs-base; color: $text-muted; margin: 0 2px; }
+
+.permission {
+  @include card;
+  background: $info-light;
+  p { margin: 0 0 12px; font-size: $fs-base; color: $text-body; }
+}
+
+.btn-activer { @include btn-primary; width: 100%; }
+
+.permission-refusee {
+  font-size: 13px;
+  color: $warning-dark;
+  background: $warning-light;
+  border: 1px solid $warning-border;
+  border-radius: $radius-md;
+  padding: 12px 14px;
+  margin: 0;
+}
+
+.ligne {
+  @include card;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: 10px;
+  text-decoration: none;
+  border-left: 4px solid $warning;
+
+  &[data-type='rupture'] {
+    border-left-color: $danger;
+    .pill { background: $danger-light; color: $danger-dark; }
+  }
+  &[data-type='stock'] .pill { background: $warning-light; color: $warning-dark; }
+}
+
+.heure { font-size: $fs-md; font-weight: 700; color: $warning-dark; min-width: 46px; }
+.pill { @include pill; }
+
+.texte { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.titre { font-size: $fs-md; font-weight: 600; color: $text-dark; }
+.detail { font-size: 13px; color: $text-muted; }

@@ -1,32 +1,41 @@
 @use '../../../shared/styles/variables' as *;
 @use '../../../shared/styles/mixins' as *;
 
-:host { display: block; min-height: 100%; background: $bg-page; }
+:host { @include page-host; }
 
-.page { max-width: 480px; margin: 0 auto; }
+.page { @include page-column; }
 
 .topbar {
-  background: $teal;
-  padding: 26px 22px;
-  .name { color: $white; font-size: 19px; font-weight: 600; }
+  @include topbar;
+  @include header-curve;
+
+  .name { @include topbar-title; }
 }
 
-.content { padding: 18px; padding-bottom: 40px; }
+.content { padding: 20px $gutter 40px; }
 
-form { display: flex; flex-direction: column; gap: 12px; }
+form { display: flex; flex-direction: column; gap: 14px; }
 
 .section-title {
-  font-size: 12px; text-transform: uppercase; color: $text-faint;
-  font-weight: 700; margin: 10px 0 0;
+  @include section-label;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 0;
+
+  &::after { content: ''; flex: 1; height: 1px; background: $border; }
+  &:first-child { margin-top: 0; }
 }
 
 label {
-  display: flex; flex-direction: column; gap: 5px;
-  font-size: 13px; color: $text-body;
+  @include field-label;
   input, select, textarea { @include field; }
-  textarea { resize: vertical; }
+  textarea { resize: vertical; min-height: 96px; }
 }
 
 .err { color: $danger-dark; font-size: 13px; margin: 0; }
 
-button { @include btn-primary; margin-top: 6px; }
+button { @include btn-primary; margin-top: 8px; }
+
+label.check { flex-direction: row; align-items: center; gap: 8px; }
+label.check input { width: 18px; height: 18px; padding: 0; }

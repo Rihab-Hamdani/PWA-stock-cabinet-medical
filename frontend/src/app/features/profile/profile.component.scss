@@ -1,57 +1,59 @@
 @use '../../shared/styles/variables' as *;
 @use '../../shared/styles/mixins' as *;
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: $bg-page;
-}
+:host { @include page-host; }
 
 .page {
-  min-height: 100vh;
-  max-width: 480px;
-  margin: 0 auto;
+  @include page-column;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .topbar {
-  background: $teal;
-  padding: 26px 22px;
-  .name { color: $white; font-size: 19px; font-weight: 600; }
+  @include topbar;
+  padding-bottom: 72px;
+  border-radius: 0 0 $radius-lg $radius-lg;
+
+  .name { @include topbar-title; }
 }
 
-.content { flex: 1; padding: 18px; }
+.content { flex: 1; padding: 0 $gutter 28px; margin-top: -54px; }
 
+// Carte d'identité qui chevauche l'en-tête
 .card {
   @include card;
   text-align: center;
-  padding: 32px 20px;
-  margin-bottom: 20px;
+  padding: 0 20px 24px;
+  margin: 34px 0 18px;
+  box-shadow: $shadow-raised;
+  border: none;
 
   .avatar {
-    width: 64px; height: 64px;
+    width: 76px; height: 76px;
     border-radius: 50%;
-    background: $teal;
+    background: $header-gradient;
     color: $white;
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 14px;
+    margin: -38px auto 14px;
+    border: 4px solid $white;
+    box-shadow: 0 8px 20px rgba(15, 118, 110, 0.28);
+    text-transform: uppercase;
   }
 
-  .nom { font-size: 17px; font-weight: 600; color: $text-dark; }
-  .email { font-size: 13px; color: $text-faint; margin-top: 2px; }
+  .nom { font-size: $fs-xl; font-weight: 700; letter-spacing: $tracking-tight; color: $text-dark; }
+  .email { font-size: 13px; color: $text-muted; margin-top: 3px; }
 
   .role-badge {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
+    @include pill;
+    margin-top: 14px;
+    padding: 5px 14px;
+    font-size: $fs-sm;
     background: $teal-light;
     color: $teal-dark;
 
@@ -59,38 +61,28 @@
   }
 }
 
-.btn-logout {
-  @include btn-outline;
-  border-color: $danger;
-  color: $danger-dark;
-}
+.btn-outline { @include btn-outline; width: 100%; margin-bottom: 10px; }
+
+.btn-logout { @include btn-danger-soft; width: 100%; }
 
 .edit-form {
   @include card;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  padding: 20px 18px;
+  margin-top: 0;
+
+  label {
+    @include field-label;
+    input { @include field; }
+  }
 }
 
-.edit-form label {
-  display: flex; flex-direction: column; gap: 5px;
-  font-size: 13px; color: $text-body;
-  input { @include field; }
-}
+.err { color: $danger-dark; font-size: 13px; margin: 0; }
 
-.edit-actions { display: flex; gap: 8px; }
+.edit-actions { display: flex; gap: 8px; margin-top: 4px; }
 
-.btn-cancel {
-  flex: 1;
-  border: 1px solid $border;
-  background: $white;
-  color: $text-body;
-  border-radius: 12px;
-  padding: 10px;
-  font-size: 14px;
-  cursor: pointer;
-}
+.btn-cancel { @include btn-secondary; flex: 1; min-height: 48px; }
 
-.btn-primary { flex: 1; @include btn-primary; margin-top: 0; }
-
-.btn-outline { @include btn-outline; width: 100%; margin-bottom: 10px; }
+.btn-primary { @include btn-primary; flex: 1; margin-top: 0; }

@@ -32,10 +32,12 @@ export class LoginComponent {
   const { email, motDePasse } = this.form.getRawValue();
   this.auth.login(email, motDePasse).subscribe({
     next: () => this.router.navigate(['/dashboard']),
-    error: () => {
-      this.erreur.set('Email ou mot de passe incorrect');
-      this.chargement.set(false);
-    }
-  });
+    error: (err) => {
+  this.chargement.set(false);
+  this.erreur.set(err?.error?.message || 'Email ou mot de passe incorrect.');
 }
+  });
+  
+}
+
 }

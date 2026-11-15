@@ -1,36 +1,25 @@
 @use '../../../shared/styles/variables' as *;
 @use '../../../shared/styles/mixins' as *;
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: $bg-page;
-}
+:host { @include page-host; }
 
 .page {
-  min-height: 100vh;
-  max-width: 480px;
-  margin: 0 auto;
+  @include page-column;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .topbar {
-  background: $teal;
-  padding: 26px 22px;
+  @include topbar;
+  @include header-curve;
 
-  .name { color: $white; font-size: 19px; font-weight: 600; }
+  .name { @include topbar-title; }
 }
 
-.content { flex: 1; padding: 18px; }
+.content { flex: 1; padding: 20px $gutter 24px; }
 
-.info, .err {
-  text-align: center;
-  font-size: 14px;
-  color: $text-muted;
-  margin-top: 24px;
-}
-
+.info, .err { @include state-text; }
 .err { color: $danger-dark; }
 
 .compte-row {
@@ -38,10 +27,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 10px;
 
-  .nom { font-size: 15px; font-weight: 600; color: $text-dark; }
-  .email { font-size: 13px; color: $text-faint; margin-top: 2px; }
+  > :first-child { min-width: 0; }
+  .nom { font-size: $fs-md; font-weight: 600; color: $text-dark; }
+  .email { font-size: 13px; color: $text-muted; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
 .actions {
@@ -50,16 +41,7 @@
   flex-shrink: 0;
 }
 
-.btn-activer, .btn-rejeter {
-  border: none;
-  border-radius: 10px;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
+.btn-activer, .btn-rejeter { @include btn-sm; min-height: 38px; border: none; }
 
-  &:disabled { opacity: .5; cursor: not-allowed; }
-}
-
-.btn-activer { background: $teal; color: $white; }
-.btn-rejeter { background: $danger-light; color: $danger-dark; }
+.btn-activer { background: $teal; color: $white; box-shadow: $shadow-btn; &:hover:not(:disabled) { background: $teal-dark; } }
+.btn-rejeter { background: $danger-light; color: $danger-dark; border: 1px solid $danger-border; }

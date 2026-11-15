@@ -1,0 +1,57 @@
+<div class="page">
+  <header class="topbar">
+    <button type="button" class="retour" (click)="retour()" aria-label="Retour">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <span class="name">Alertes</span>
+  </header>
+
+  <main class="content">
+    @if (notifs.permission() === 'default') {
+      <div class="permission">
+        <p>Recevez une notification sur cet appareil avant chaque rendez-vous et en cas de rupture de stock.</p>
+        <button type="button" class="btn-activer" (click)="activer()">Activer les notifications</button>
+      </div>
+    } @else if (notifs.permission() === 'denied') {
+      <p class="permission-refusee">
+        Les notifications sont bloquées pour ce site. Autorisez-les dans les réglages du navigateur
+        pour être prévenu même quand l'application est en arrière-plan.
+      </p>
+    }
+
+    <h2 class="section-label">Rendez-vous dans les {{ notifs.rappelMinutes() }} prochaines minutes</h2>
+    @if (notifs.rdv().length === 0) {
+      <p class="vide">Aucun rendez-vous imminent.</p>
+    } @else {
+      @for (r of notifs.rdv(); track r.patientId + r.heure) {
+        <a class="ligne" data-type="rdv" [routerLink]="['/patients', r.patientId]">
+          <span class="heure">{{ r.heure.slice(0, 5) }}</span>
+          <span class="texte">
+            <span class="titre">{{ r.prenom }} {{ r.nom }}</span>
+            <span class="detail">
+              @if (r.examen) { {{ r.examen }} · }
+              dans {{ r.minutesRestantes }} min
+            </span>
+          </span>
+        </a>
+      }
+    }
+
+    <h2 class="section-label">Stock</h2>
+    @if (notifs.stock().length === 0) {
+      <p class="vide">Aucun article en rupture ou en stock bas.</p>
+    } @else {
+      @for (s of notifs.stock(); track s.produitId) {
+        <a class="ligne" [attr.data-type]="s.rupture ? 'rupture' : 'stock'" [routerLink]="['/produits', s.produitId]">
+          <span class="pill">{{ s.rupture ? 'Rupture' : 'Stock bas' }}</span>
+          <span class="texte">
+            <span class="titre">{{ s.nom }}</span>
+            <span class="detail">Reste {{ s.quantite }} {{ s.unite }} · seuil {{ s.seuil }}</span>
+          </span>
+        </a>
+      }
+    }
+  </main>
+</div>

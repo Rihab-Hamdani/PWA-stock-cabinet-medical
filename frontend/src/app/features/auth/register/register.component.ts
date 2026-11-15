@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -13,11 +13,11 @@ import { AuthService } from '../../../core/services/auth.service';
 export class RegisterComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
-  private router = inject(Router);
 
   chargement = signal(false);
   erreur = signal('');
   succes = signal(false);
+  compteActif = signal(false); // true = premier compte (médecin), utilisable tout de suite
 
   form = this.fb.nonNullable.group({
     nom: ['', Validators.required],
@@ -32,9 +32,10 @@ export class RegisterComponent {
     this.erreur.set('');
 
     const { nom, prenom, email, motDePasse } = this.form.getRawValue();
-    this.auth.register(nom, prenom, email, motDePasse).subscribe({
-      next: () => {
+    this.auth.register(nom, prenom, email.trim().toLowerCase(), motDePasse).subscribe({
+      next: (res) => {
         this.chargement.set(false);
+        this.compteActif.set(res?.actif === true);
         this.succes.set(true);
       },
       error: (err) => {

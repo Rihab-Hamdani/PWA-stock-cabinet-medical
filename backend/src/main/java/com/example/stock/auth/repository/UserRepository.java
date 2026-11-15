@@ -1,5 +1,6 @@
 package com.example.stock.auth.repository;
 
+import com.example.stock.auth.entity.Role;
 import com.example.stock.auth.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findByActifFalse();
     Optional<User> findByResetToken(String resetToken);
     long countByActifFalse();
+    List<User> findByRoleAndActifTrue(Role role);
 }

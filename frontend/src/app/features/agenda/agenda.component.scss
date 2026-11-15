@@ -1,0 +1,153 @@
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
+
+:host { display: block; min-height: 100%; background: $bg-page; position: relative; }
+
+.page { max-width: 480px; margin: 0 auto; padding-bottom: 90px; }
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+  .lien { color: $white; font-size: 12px; text-decoration: underline; }
+}
+
+.content { padding: 14px 14px 0; }
+
+.mois-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .mois-label { flex: 1; text-align: center; font-size: 16px; font-weight: 600; color: $text-dark; text-transform: capitalize; }
+  .fleche {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px solid $border;
+    background: $white; font-size: 20px; line-height: 1; cursor: pointer;
+  }
+  .btn-today {
+    border: 1px solid $teal; color: $teal-dark; background: $teal-light;
+    border-radius: 10px; padding: 7px 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+  }
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 14px;
+}
+
+.entete { text-align: center; font-size: 11px; color: $text-faint; padding: 4px 0; }
+
+.cellule {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: 1px solid transparent;
+  background: $white;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0;
+
+  .numero { font-size: 14px; color: $text-dark; }
+  .pastille {
+    background: $teal; color: $white; font-size: 10px; font-weight: 700;
+    min-width: 16px; height: 16px; border-radius: 8px; padding: 0 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  &.autre-mois { background: transparent; .numero { color: $text-faint; } }
+  &.aujourdhui { border-color: $teal; }
+  &.selectionne { background: $teal; .numero { color: $white; } .pastille { background: $white; color: $teal-dark; } }
+}
+
+.jour-titre {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  h2 { font-size: 15px; margin: 0; color: $text-dark; text-transform: capitalize; }
+  span { font-size: 12px; color: $text-faint; }
+}
+
+.info { text-align: center; color: $text-muted; font-size: 14px; margin-top: 18px; }
+.err { color: $danger-dark; }
+
+.rdv {
+  @include card;
+  margin-bottom: 10px;
+  border-left: 4px solid #94a3b8;
+
+  // Orange = en attente, vert = arrivé, bleu = chez la docteure, gris = terminé, rouge = annulé
+  &[data-statut='PLANIFIE'] { border-left-color: #f59e0b; background: #fffbf2; }
+  &[data-statut='ARRIVE'] { border-left-color: #16a34a; background: #f3fcf6; }
+  &[data-statut='EN_CONSULTATION'] { border-left-color: #2563eb; background: #f5f8ff; }
+  &[data-statut='TERMINE'] { border-left-color: #94a3b8; }
+  &[data-statut='ANNULE'] { border-left-color: #dc2626; background: #fef5f5; opacity: .75; .nom { text-decoration: line-through; } }
+}
+
+.rdv-haut { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+
+.heure { font-size: 15px; font-weight: 700; color: $teal-dark; min-width: 46px; }
+.identite { flex: 1; min-width: 0; }
+.nom { font-size: 15px; font-weight: 600; color: $text-dark; }
+.meta { font-size: 12px; color: $text-faint; margin-top: 2px; }
+
+.rdv {
+  @include card;
+  margin-bottom: 10px;
+  border-left: 5px solid #f59e0b;
+
+  &[data-statut='PLANIFIE'] { border-left-color: #f59e0b; }
+  &[data-statut='ARRIVE'] { border-left-color: #16a34a; }
+  &[data-statut='EN_CONSULTATION'] { border-left-color: #2563eb; }
+  &[data-statut='TERMINE'] { border-left-color: #64748b; }
+  &[data-statut='ANNULE'] { border-left-color: #dc2626; opacity: .7; .nom { text-decoration: line-through; } }
+}
+
+.chip-statut {
+  font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 8px; white-space: nowrap;
+
+  &[data-statut='PLANIFIE'] { background: #ffedd5; color: #9a3412; }
+  &[data-statut='ARRIVE'] { background: #dcfce7; color: #166534; }
+  &[data-statut='EN_CONSULTATION'] { background: #dbeafe; color: #1e40af; }
+  &[data-statut='TERMINE'] { background: #e2e8f0; color: #334155; }
+  &[data-statut='ANNULE'] { background: #fee2e2; color: #991b1b; }
+}
+
+.rdv-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+select {
+  flex: 1; min-width: 0; padding: 8px; border-radius: 8px; border: 1px solid $border;
+  background: $white; font-size: 13px;
+}
+
+.chip-paye, .btn-petit {
+  border: 1px solid $border; background: $white; border-radius: 8px;
+  padding: 8px 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+
+.chip-paye { color: #92400e; background: #fffbeb; border-color: #fcd34d; &.paye { color: #166534; background: #f0fdf4; border-color: #86efac; } }
+.btn-petit { color: $text-dark; }
+
+.fab {
+  position: fixed;
+  bottom: 74px;
+  right: 24px;
+  width: 54px; height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: $teal;
+  color: $white;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: $shadow-raised;
+}

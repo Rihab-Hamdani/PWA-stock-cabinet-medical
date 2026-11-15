@@ -1,0 +1,44 @@
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
+
+:host { display: block; min-height: 100%; background: $bg-page; }
+
+.page { max-width: 480px; margin: 0 auto; }
+
+.topbar {
+  background: $teal;
+  padding: 26px 22px;
+  .name { color: $white; font-size: 19px; font-weight: 600; }
+}
+
+.content { padding: 16px; }
+
+.permission {
+  font-size: 13px; color: $text-muted; margin-bottom: 14px;
+  p { margin: 0; }
+  button {
+    width: 100%; padding: 11px; border-radius: 10px; border: 1px solid $teal;
+    background: $teal-light; color: $teal-dark; font-weight: 600; cursor: pointer;
+  }
+}
+
+.info { text-align: center; color: $text-muted; font-size: 14px; margin-top: 24px; }
+
+.rappel {
+  @include card;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+  border-left: 5px solid #94a3b8;
+  cursor: pointer;
+
+  .titre { font-size: 14px; font-weight: 700; color: $text-dark; }
+  .message { font-size: 13px; color: $text-muted; }
+
+  &[data-type='STOCK_RUPTURE'] { border-left-color: #dc2626; }
+  &[data-type='STOCK_BAS'] { border-left-color: #f59e0b; }
+  &[data-type='RDV_PROCHE'] { border-left-color: #2563eb; }
+}

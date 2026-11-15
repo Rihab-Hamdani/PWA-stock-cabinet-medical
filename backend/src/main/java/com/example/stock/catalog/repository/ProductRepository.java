@@ -47,6 +47,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         """)
     List<ProductDto> findAlertes(Pageable pageable);
 
+    @Query("select p from Product p where p.actif = true and p.quantiteActuelle <= p.seuilAlerte order by p.quantiteActuelle asc, p.nom asc")
+    List<Product> findStockBas();
+
     List<Product> findByCategorieIdAndActifTrue(UUID categorieId);
 
     List<Product> findByCategorieIdAndDeletedAtIsNotNull(UUID categorieId);

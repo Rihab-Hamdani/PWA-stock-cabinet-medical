@@ -3,27 +3,56 @@
     <div class="brand">
       <div class="logo"><i class="ti ti-user-plus"></i></div>
       <h1>Créer un compte</h1>
-      <p>Secrétariat — Cabinet Médical</p>
+      <p>Cabinet Médical</p>
     </div>
 
     @if (succes()) {
-      <p class="success">
-  Votre compte a été créé avec succès. Le médecin doit valider votre demande — vous recevrez un email dès que votre compte sera activé.
-</p>
-      <a routerLink="/login" class="back-link">Retour à la connexion</a>
+      @if (compteActif()) {
+        <div class="succes-box">
+          <div class="succes-icone">✓</div>
+          <h2>Compte créé</h2>
+          <p>
+            Votre compte <strong>médecin</strong> est prêt.
+            Vous pouvez maintenant vous connecter avec
+            <strong>{{ form.controls.email.value }}</strong>.
+          </p>
+          <a routerLink="/login" class="back-link">Se connecter</a>
+        </div>
+      } @else {
+        <div class="succes-box">
+          <div class="succes-icone">✓</div>
+          <h2>Demande envoyée</h2>
+          <p>
+            Votre compte a bien été créé, mais il doit d'abord être
+            <strong>validé par le médecin</strong>. Vous ne pourrez pas vous connecter avant.
+          </p>
+          <p>
+            Dès qu'il l'aura accepté, vous recevrez un email à l'adresse
+            <strong>{{ form.controls.email.value }}</strong>.
+          </p>
+          <p class="hint">
+            Pensez à vérifier votre dossier <strong>courrier indésirable (spam)</strong>
+            si vous ne voyez pas l'email.
+          </p>
+          <a routerLink="/login" class="back-link">Retour à la connexion</a>
+        </div>
+      }
     } @else {
       <form [formGroup]="form" (ngSubmit)="submit()">
         <label>Prénom
-          <input type="text" formControlName="prenom" />
+          <input type="text" formControlName="prenom" autocomplete="given-name" />
         </label>
         <label>Nom
-          <input type="text" formControlName="nom" />
+          <input type="text" formControlName="nom" autocomplete="family-name" />
         </label>
         <label>Email
-          <input type="email" formControlName="email" placeholder="vous@cabinet.tn" />
+          <input type="email" formControlName="email" placeholder="vous@exemple.com"
+                 autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" />
+          <small class="aide">Utilisez une adresse valide : la confirmation y sera envoyée.</small>
         </label>
         <label>Mot de passe
-          <input type="password" formControlName="motDePasse" placeholder="6 caractères min." />
+          <input type="password" formControlName="motDePasse" placeholder="6 caractères min."
+                 autocomplete="new-password" />
         </label>
 
         @if (erreur()) { <p class="err">{{ erreur() }}</p> }
